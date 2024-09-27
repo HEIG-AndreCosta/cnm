@@ -1,3 +1,5 @@
-# Cnm24 Students
+# Cnm24 
 
-This is the official repo for CNM course 2024/2025. 
+## CNM 24 Repository for André Costa and Alexandre Iorio
+
+
