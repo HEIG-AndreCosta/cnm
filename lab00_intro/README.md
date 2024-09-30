@@ -14,8 +14,8 @@ lscpu
 * Number of cores:                      6
 * On-line CPU(s) list:                  0-5
 * Number of threads per core:           1
-* Min frequency:                        115.2000
-* Max frequency:                        1510.4000
+* Min frequency (MHz):                  115.2000
+* Max frequency (MHz):                  1510.4000
 * L1d cache:                            384 KiB
 * L1i cache:                            384 KiB
 * L2 cache:                             1.5 MiB
