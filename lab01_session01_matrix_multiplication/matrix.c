@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <stdlib.h>
+#include <string.h>
 
 /*
     Matrix multiplication as:
@@ -80,6 +81,47 @@ void tile_square_matrix_multiplication(const int n, const double *matrix_a,
 	double *tile_c =
 		(double *)calloc(tile_size * tile_size, sizeof(double));
 
+	if(!tile_a || !tile_b || !tile_c){
+		free(tile_a);
+		free(tile_b);
+		free(tile_c);
+		return;
+	}
 	const int complete_tiles = n / tile_size;
+	const int result_tiles_nb = (n * n) / (tile_size * tile_size);
+
 	const int rest_tile_size = n % tile_size;
+	if (rest_tile_size == 0) {
+		for (int result_tile = 0; result_tile < result_tiles_nb;
+		     ++result_tile) {
+			for (int i = 0; i < complete_tiles; ++i) {
+				for (int col = 0; col < tile_size; ++col) {
+					const size_t a_index =
+						(result_tile / 3) * tile_size +
+						col * n + i * tile_size * n;
+					const size_t b_index =
+						i * tile_size + col * n +
+						((result_tile / 3) * tile_size *
+						 n);
+					memcpy(tile_a + col * tile_size,
+					       matrix_a + a_index, tile_size);
+					memcpy(tile_b + col * tile_size,
+					       matrix_b + b_index, tile_size);
+				}
+				tile_multiplication(tile_size, tile_a, tile_b, tile_c,
+						    tile_size, tile_size,
+						    tile_size);
+			}
+			for (int col = 0; col < tile_size; ++col) {
+				const size_t index =
+					result_tile * tile_size + col * n;
+				memcpy(matrix_c + index,
+				       tile_c + col * tile_size, tile_size);
+			}
+		}
+	}
+	free(tile_a);
+	free(tile_b);
+	free(tile_c);
+
 }
