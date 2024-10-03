@@ -1,11 +1,11 @@
 #include <assert.h>
 #include <stdio.h>
 #include "matrix.h"
+#include <string.h>
 
 #define M	    (3)
 #define N	    (4)
 #define K	    (2)
-#define RESULT_SIZE (M * N)
 
 // Used https://matrix.reshish.com/multCalculation.php to calculate
 int main(void)
@@ -20,12 +20,10 @@ int main(void)
 	naive_matrix_multiplication((double *)a, (double *)b, (double *)c, M, N,
 				    K);
 
-	for (int i = 0; i < RESULT_SIZE; ++i) {
-		double ci = *((double *)c + i);
-		double targeti = *((double *)target + i);
-		assert(targeti == ci);
-	}
-	printf("Naive Matrix Multiplication OK");
+	assert(memcmp(target, c, M * N) == 0);
+	printf("Naive Matrix Multiplication OK\n");
+	return 0;
+
 #if 0
 	puts("MATRIX A");
 	for (int i = 0; i < 3; ++i) {
