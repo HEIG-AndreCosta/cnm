@@ -119,6 +119,7 @@ void tile_square_matrix_multiplication(const int n, const double *matrix_a,
 			}
 		}
 	}
+	//TODO handle the case when the the tile size is not a multiple of the matrix size
 	free(tile_a);
 	free(tile_b);
 	free(tile_c);
