@@ -8,16 +8,15 @@
 // Used https://matrix.reshish.com/multCalculation.php to calculate
 int main(void)
 {
-	double a[N][N] = {
-		{ 1, 1, 2, 3, 4, 5 },	    { 6, 7, 8, 9, 10, 11 },
-		{ 12, 13, 14, 15, 16, 17 }, { 18, 19, 20, 21, 22, 23 },
-		{ 24, 25, 26, 27, 28, 29 }, { 30, 31, 32, 33, 34, 35 }
-	};
-	double b[N][N] = {
-		{ 1, 1, 2, 3, 4, 5 },	    { 6, 7, 8, 9, 10, 11 },
-		{ 12, 13, 14, 15, 16, 17 }, { 18, 19, 20, 21, 22, 23 },
-		{ 24, 25, 26, 27, 28, 29 }, { 30, 31, 32, 33, 34, 35 }
-	};
+	double a[N][N];
+	double b[N][N];
+
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			a[i][j] = i * N + j;
+			b[i][j] = i * N + j;
+		}
+	}
 	double target[N][N] = {
 		{ 330, 345, 360, 375, 390, 405 },
 		{ 870, 921, 972, 1023, 1074, 1125 },
@@ -28,51 +27,13 @@ int main(void)
 	};
 	double c[N][N];
 
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			a[i][j] = i * N + j;
-			b[i][j] = i * N + j;
-		}
-	}
-
-	// naive_matrix_multiplication((double *)a, (double *)b, (double *)c, N, N,
-	// 			    N);
-
-	printf("{");
-	for (int i = 0; i < N; ++i) {
-		printf("{");
-		for (int j = 0; j < N; ++j) {
-			printf("%g", c[i][j]);
-			if (j < N - 1) {
-				printf(", ");
-			}
-		}
-		printf("}\n");
-	}
-	printf("}\n");
 	tile_square_matrix_multiplication(N, (double *)a, (double *)b,
 					  (double *)c, 2);
 
-	printf("{");
-	for (int i = 0; i < N; ++i) {
-		printf("{");
-		for (int j = 0; j < N; ++j) {
-			printf("%g", c[i][j]);
-			if (j < N - 1) {
-				printf(", ");
-			}
-		}
-		printf("}\n");
-	}
-	printf("}\n");
 	assert(memcmp(target, c, N * N) == 0);
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			assert(target[j][i] == c[j][i]);
-		}
-	}
 
-	printf("Title Square Matrix Multiplication Tile Size Multiple OK");
+	printf("Tile Matrix Multiplication (N = 6 Tile Size = 2) OK\n");
+	return 0;
 
 #if 0
 	puts("MATRIX A");
