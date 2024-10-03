@@ -2,15 +2,15 @@
 #include <time.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include "matrix.h"
 
 #ifdef BLAS
-    #include <cblas.h>
+#include <cblas.h>
 #endif
 
 #include "utils.h"
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
-
 
 /*
     This 3x3 matrix (M)
@@ -35,7 +35,6 @@
         - In col major would be M[col_idx * size + row_idx]
 */
 
-
 /*
     Square matrix multiplication as:
 
@@ -45,41 +44,24 @@
     matrix b is n by n, column major
     matrix c is n by n, column major
 */
-void naive_square_matrix_multiplication(const int n, const double *matrix_a, const double *matrix_b, double *matrix_c)
+void naive_square_matrix_multiplication(const int n, const double *matrix_a,
+					const double *matrix_b,
+					double *matrix_c)
 {
-    // row i of matrix_a
-    for (int i = 0; i < n; ++i)
-    {
-        // column j of matrix_b
-        for (int j = 0; j < n; ++j)
-        {
-            // calculate cij
-            double cij = 0.0;
+	// row i of matrix_a
+	for (int i = 0; i < n; ++i) {
+		// column j of matrix_b
+		for (int j = 0; j < n; ++j) {
+			// calculate cij
+			double cij = 0.0;
 
-            for (int k = 0; k < n; ++k)
-            {
-                cij += matrix_a[i + k * n] * matrix_b[k + j * n];
-            }
-            matrix_c[i + j * n] = cij;
-        }
-    }
-}
-
-/*
-    Matrix multiplication as:
-
-        matrix_c = matrix_a * matrix_b
-
-    matrix_a is M by K, column major
-    matrix_b is K by N, column major
-    matrix_c is M by N, column major
-*/
-void naive_matrix_multiplication(const double *matrix_a, const double *matrix_b, double *matrix_c, const int M, const int N, const int K)
-{
-     /*
-        Implement general matrix multiplication
-        You can use the naive square matrix multiplication as base.            
-    */    
+			for (int k = 0; k < n; ++k) {
+				cij += matrix_a[i + k * n] *
+				       matrix_b[k + j * n];
+			}
+			matrix_c[i + j * n] = cij;
+		}
+	}
 }
 
 /*
@@ -92,23 +74,23 @@ void naive_matrix_multiplication(const double *matrix_a, const double *matrix_b,
     matrix_c is m by n, column major
     lda is the leading dimension
 */
-void tile_multiplication(const int lda, const double *matrix_a, const double *matrix_b, double *matrix_c, const int M, const int N, const int K)
+void tile_multiplication(const int lda, const double *matrix_a,
+			 const double *matrix_b, double *matrix_c, const int M,
+			 const int N, const int K)
 {
-    // row i of matrix_a
-    for (int i = 0; i < M; ++i)
-    {
-        // column j of matrix_b
-        for (int j = 0; j < N; ++j)
-        {
-            // calculate cij
-            double cij = matrix_c[i + j * lda];
-            for (int k = 0; k < K; ++k)
-            {
-                cij += matrix_a[i + k * lda] * matrix_b[k + j * lda];
-            }
-            matrix_c[i + j * lda] = cij;
-        }
-    }
+	// row i of matrix_a
+	for (int i = 0; i < M; ++i) {
+		// column j of matrix_b
+		for (int j = 0; j < N; ++j) {
+			// calculate cij
+			double cij = matrix_c[i + j * lda];
+			for (int k = 0; k < K; ++k) {
+				cij += matrix_a[i + k * lda] *
+				       matrix_b[k + j * lda];
+			}
+			matrix_c[i + j * lda] = cij;
+		}
+	}
 }
 
 /*
@@ -119,112 +101,118 @@ void tile_multiplication(const int lda, const double *matrix_a, const double *ma
     matrix b is n by n, column major
     matrix c is n by n, column major
 */
-void tile_square_matrix_multiplication(const int n, const double *matrix_a, const double *matrix_b, double *matrix_c, const int tile_size)
+void tile_square_matrix_multiplication(const int n, const double *matrix_a,
+				       const double *matrix_b, double *matrix_c,
+				       const int tile_size)
 {
-    /*
+	/*
         Implement tile square matrix multiplication!!
         You can use the naive matrix multiplication as base.            
         Iterate over the tiles in each matrix and use tile_multiplication with the correct values        
         Note: Do not forget to handle the edges when the tile is bigger than the matrix.
-    */       
+    */
 }
 
 #ifdef BLAS
 /*
     cblas dgemm adaptator
 */
-void cblas_square_matrix_multiplication(int n, double *matrix_a, double *matrix_b, double *matrix_c)
-{   
-    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, n, n, n, 1., matrix_a, n, matrix_b, n, 1., matrix_c, n);
+void cblas_square_matrix_multiplication(int n, double *matrix_a,
+					double *matrix_b, double *matrix_c)
+{
+	cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, n, n, n, 1.,
+		    matrix_a, n, matrix_b, n, 1., matrix_c, n);
 }
 #endif
 
 int main(int argc, char *argv[])
 {
+	bool use_tiling = false;
+	int matrix_size, tile_size, opt;
+	char *end_opt_parser;
 
-    bool use_tiling = false;
-    int matrix_size, tile_size, opt;
-    char *end_opt_parser;
+	if (argc > 1 && argc <= 3) {
+		use_tiling = false;
+		matrix_size = (int)(strtoul(argv[1], &end_opt_parser, 10));
+		if (*end_opt_parser != '\0') {
+			fprintf(stderr, "Error parsing matrix_size '%s'",
+				argv[1]);
+			abort();
+		}
 
-    if(argc > 1 && argc <= 3)
-    {
-        use_tiling = false;
-        matrix_size = (int)(strtoul(argv[1], &end_opt_parser, 10));
-        if(*end_opt_parser != '\0')
-        {
-            fprintf(stderr, "Error parsing matrix_size '%s'", argv[1]);
-            abort();
-        } 
+		if (argc == 3) {
+			use_tiling = true;
+			tile_size =
+				(int)(strtoul(argv[2], &end_opt_parser, 10));
+			if (*end_opt_parser != '\0') {
+				fprintf(stderr, "Error parsing tile_size '%s'",
+					argv[2]);
+				abort();
+			}
+		}
+	} else {
+		fprintf(stdout, "Usage %s matrix_size [tile_size]\n", argv[0]);
+		abort();
+	}
 
-        if(argc == 3)
-        {
-            use_tiling = true;
-            tile_size = (int)(strtoul(argv[2], &end_opt_parser, 10));
-            if(*end_opt_parser != '\0')
-            {
-                fprintf(stderr, "Error parsing tile_size '%s'", argv[2]);
-                abort();
-            } 
-        }
-    } else {
-        fprintf(stdout, "Usage %s matrix_size [tile_size]\n", argv[0]);
-        abort();
-    }
-   
-    clock_t start, end;
-    
-    double *matrix_a = (double *)calloc(matrix_size * matrix_size, sizeof(double));
-    double *matrix_b = (double *)calloc(matrix_size * matrix_size, sizeof(double));
-    double *matrix_c = (double *)calloc(matrix_size * matrix_size, sizeof(double));
+	clock_t start, end;
 
-    if(matrix_a == NULL || matrix_b == NULL || matrix_c == NULL)
-    {
-        fprintf(stderr, "Error allocating matrix memory\n");
-        abort();
-    }
+	double *matrix_a =
+		(double *)calloc(matrix_size * matrix_size, sizeof(double));
+	double *matrix_b =
+		(double *)calloc(matrix_size * matrix_size, sizeof(double));
+	double *matrix_c =
+		(double *)calloc(matrix_size * matrix_size, sizeof(double));
 
-    // "random" seed
-    srand48(time(NULL));
+	if (matrix_a == NULL || matrix_b == NULL || matrix_c == NULL) {
+		fprintf(stderr, "Error allocating matrix memory\n");
+		abort();
+	}
 
-    // random matrix initilization
-    matrix_init(matrix_a, matrix_size, matrix_size);
-    matrix_init(matrix_b, matrix_size, matrix_size);
-    matrix_clear(matrix_c, matrix_size, matrix_size);
+	// "random" seed
+	srand48(time(NULL));
 
-    // print_matrix(matrix_a, matrix_size);
-    // printf("\n");
-    // print_matrix(matrix_b, matrix_size);
-    // printf("\n");
+	// random matrix initilization
+	matrix_init(matrix_a, matrix_size, matrix_size);
+	matrix_init(matrix_b, matrix_size, matrix_size);
+	matrix_clear(matrix_c, matrix_size, matrix_size);
+	// print_matrix(matrix_a, matrix_size);
+	// printf("\n");
+	// print_matrix(matrix_b, matrix_size);
+	// printf("\n");
 
-    /* ----------------------------------------------------------------------------------------- */ 
+	/* ----------------------------------------------------------------------------------------- */
 
-    if(use_tiling){
-        // Use tilting matrix multiplication
-        start = clock();
-        tile_square_matrix_multiplication(matrix_size, matrix_a, matrix_b, matrix_c, tile_size);
-        end = clock();        
-    }else{
-        // Use naive matrix multiplication
-        start = clock();        
-        naive_matrix_multiplication(matrix_a, matrix_b, matrix_c, matrix_size, matrix_size, matrix_size);
-        end = clock();
-    }
+	if (use_tiling) {
+		// Use tilting matrix multiplication
+		start = clock();
+		tile_square_matrix_multiplication(
+			matrix_size, matrix_a, matrix_b, matrix_c, tile_size);
+		end = clock();
+	} else {
+		// Use naive matrix multiplication
+		start = clock();
+		naive_matrix_multiplication(matrix_a, matrix_b, matrix_c,
+					    matrix_size, matrix_size,
+					    matrix_size);
+		end = clock();
+	}
 
-    printf("%f\n", (float)(end - start) / CLOCKS_PER_SEC);
+	printf("%f\n", (float)(end - start) / CLOCKS_PER_SEC);
 
-    /* ----------------------------------------------------------------------------------------- */
+	/* ----------------------------------------------------------------------------------------- */
 
-    // //Optional cblas section
-    // start = clock();
-    // cblas_square_matrix_multiplication(matrix_size, matrix_a, matrix_b, matrix_c);
-    // end = clock();
-    // printf("%f\n", (float)(end - start) / CLOCKS_PER_SEC);
+	// //Optional cblas section
+	// start = clock();
+	// cblas_square_matrix_multiplication(matrix_size, matrix_a, matrix_b, matrix_c);
+	// end = clock();
+	// printf("%f\n", (float)(end - start) / CLOCKS_PER_SEC);
 
-    /* ----------------------------------------------------------------------------------------- */
+	/* ----------------------------------------------------------------------------------------- */
 
-    free(matrix_a);
-    free(matrix_b);
-    free(matrix_c);
+	free(matrix_a);
+	free(matrix_b);
+	free(matrix_c);
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
