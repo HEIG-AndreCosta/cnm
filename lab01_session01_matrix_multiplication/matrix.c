@@ -99,28 +99,38 @@ void tile_square_matrix_multiplication(const int n, const double *matrix_a,
 	const int rest_tile_size = n % tile_size;
 	if (rest_tile_size == 0) {
 		for (int tile = 0; tile < nb_tiles; ++tile) {
-			memset(tile_c, 0, tile_size * tile_size * sizeof(*tile_c));
+			memset(tile_c, 0,
+			       tile_size * tile_size * sizeof(*tile_c));
 			for (int i = 0; i < complete_tiles; ++i) {
 				for (int col = 0; col < tile_size; ++col) {
-					const size_t a_index = (tile % complete_tiles) * tile_size + col * n + i * tile_size * n;
+					const size_t a_index =
+						(tile % complete_tiles) *
+							tile_size +
+						col * n + i * tile_size * n;
 					const size_t b_index =
 						i * tile_size + col * n +
-						((tile / complete_tiles) * tile_size * n);
+						((tile / complete_tiles) *
+						 tile_size * n);
 
 					memcpy(tile_a + col * tile_size,
-					       matrix_a + a_index, tile_size  * sizeof(*matrix_a));
+					       matrix_a + a_index,
+					       tile_size * sizeof(*matrix_a));
 					memcpy(tile_b + col * tile_size,
-					       matrix_b + b_index, tile_size * sizeof(*matrix_b));
+					       matrix_b + b_index,
+					       tile_size * sizeof(*matrix_b));
 				}
 				tile_multiplication(tile_size, tile_a, tile_b,
 						    tile_c, tile_size,
 						    tile_size, tile_size);
 			}
 			for (int col = 0; col < tile_size; ++col) {
-				const size_t index = tile * tile_size + col * n + (tile/ complete_tiles) * n;
+				const size_t index =
+					tile * tile_size + col * n +
+					(tile / complete_tiles) * n;
 
 				memcpy(matrix_c + index,
-				       tile_c + col * tile_size, tile_size * sizeof(*matrix_c));
+				       tile_c + col * tile_size,
+				       tile_size * sizeof(*matrix_c));
 			}
 		}
 	}
