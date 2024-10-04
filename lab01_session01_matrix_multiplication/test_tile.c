@@ -27,12 +27,20 @@ int main(void)
 	};
 	double c[N][N];
 
-	tile_square_matrix_multiplication(N, (double *)a, (double *)b,
-					  (double *)c, 2);
+	const int tile_sizes[] = { 1, 2, 3, 6 };
+	const size_t array_size = sizeof(tile_sizes) / sizeof(tile_sizes[0]);
 
-	assert(memcmp(target, c, N * N) == 0);
+	for (int i = 0; i < array_size; ++i) {
+		memset(c, 0, N * N);
 
-	printf("Tile Matrix Multiplication (N = 6 Tile Size = 2) OK\n");
+		tile_square_matrix_multiplication(N, (double *)a, (double *)b,
+						  (double *)c, tile_sizes[i]);
+
+		assert(memcmp(target, c, N * N) == 0);
+
+		printf("Tile Matrix Multiplication (N = 6 Tile Size = %d) OK\n",
+		       tile_sizes[i]);
+	}
 	return 0;
 
 #if 0
