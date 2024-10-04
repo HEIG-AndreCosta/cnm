@@ -27,7 +27,7 @@ int main(void)
 	};
 	double c[N][N];
 
-	for (int tile_size = 0; tile_size <= N + 1; ++tile_size) {
+	for (int tile_size = 1; tile_size <= N + 1; ++tile_size) {
 		memset(c, 0, N * N);
 
 		tile_square_matrix_multiplication(N, (double *)a, (double *)b,
