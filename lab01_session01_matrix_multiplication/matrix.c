@@ -136,8 +136,66 @@ void tile_square_matrix_multiplication(int n, const double *matrix_a,
 				       tile_size * sizeof(*matrix_c));
 			}
 		}
+	} else {
+		// In the case the tile size is not a multiple of the matrix size, we need to check before accessing the matrix values
+		//
+		// This code is pretty much the same thing as the one above but with more checks
+		// The point of this duplication is so we can go faster in the case the tile size is a multiple of the matrix size
+		const size_t matrix_size = n * n;
+		for (int tile = 0; tile < nb_tiles; ++tile) {
+			memset(tile_c, 0,
+			       tile_size * tile_size * sizeof(*tile_c));
+			for (int i = 0; i < complete_tiles + 1; ++i) {
+				for (int col = 0; col < tile_size; ++col) {
+					const size_t a_index =
+						(tile % complete_tiles) *
+							tile_size +
+						col * n + i * tile_size * n;
+					const size_t b_index =
+						i * tile_size + col * n +
+						((tile / complete_tiles) *
+						 tile_size * n);
+					if (a_index < matrix_size) {
+						memcpy(tile_a + col * tile_size,
+						       matrix_a + a_index,
+						       tile_size *
+							       sizeof(*matrix_a));
+					} else {
+						memset(tile_a + col * tile_size,
+						       0,
+						       tile_size *
+							       sizeof(*tile_a));
+					}
+
+					if (b_index < matrix_size) {
+						memcpy(tile_b + col * tile_size,
+						       matrix_b + b_index,
+						       tile_size *
+							       sizeof(*tile_b));
+					} else {
+						memset(tile_b + col * tile_size,
+						       0,
+						       tile_size *
+							       sizeof(*tile_b));
+					}
+				}
+				tile_multiplication(tile_size, tile_a, tile_b,
+						    tile_c, tile_size,
+						    tile_size, tile_size);
+			}
+			for (int col = 0; col < tile_size; ++col) {
+				const size_t index =
+					tile * tile_size + col * n +
+					(tile / complete_tiles) * n;
+
+				if (index < matrix_size) {
+					memcpy(matrix_c + index,
+					       tile_c + col * tile_size,
+					       tile_size * sizeof(*matrix_c));
+				}
+			}
+		}
 	}
-	//TODO handle the case when the the tile size is not a multiple of the matrix size
 	free(tile_a);
 	free(tile_b);
 	free(tile_c);
