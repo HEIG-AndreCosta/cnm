@@ -8,3 +8,4 @@ gcc -o test_tile test_tile.c matrix.c
 
 wait
 
+rm -f test test_tile
