@@ -75,7 +75,7 @@ void tile_square_matrix_multiplication(int n, const double *matrix_a,
         Iterate over the tiles in each matrix and use tile_multiplication with the correct values        
         Note: Do not forget to handle the edges when the tile is bigger than the matrix.
     */
-	if (tile_size == 1) {
+	if (tile_size <= 1) {
 		naive_matrix_multiplication(matrix_a, matrix_b, matrix_c, n, n,
 					    n);
 		return;
