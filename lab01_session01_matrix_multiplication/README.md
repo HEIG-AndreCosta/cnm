@@ -45,3 +45,21 @@ This script iterate over a sequence and prints on screen the number and the outp
         echo "$SIZE, $(./main $SIZE)"
     done
 ```
+
+## Tests
+
+Des tests pour les algorithmes ont été effectués, ils peuvent être lancées avec le script bash `test.sh`
+
+```bash
+./test.sh
+
+Naive Matrix Multiplication OK
+Tile Matrix Multiplication (N = 6 Tile Size = 1) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 2) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 3) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 4) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 5) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 6) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 7) OK
+```
+
