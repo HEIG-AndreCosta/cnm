@@ -12,9 +12,20 @@ def main():
     matrix_sizes = [10, 50, 100, 250, 300, 500]
 
     outputs_naive = [
-        subprocess.check_output(["./main", str(matrix_size)])
+        float(subprocess.check_output(["./main", str(matrix_size)]).decode())
         for matrix_size in matrix_sizes
     ]
+
+    plt.plot(matrix_sizes, outputs_naive)
+
+    plt.show()
+    outputs_tiling = [
+        float(subprocess.check_output(["./main", str(matrix_size), str(5)]).decode())
+        for matrix_size in matrix_sizes
+    ]
+    plt.plot(matrix_sizes, outputs_tiling)
+
+    plt.show()
 
 
 if __name__ == "__main__":
