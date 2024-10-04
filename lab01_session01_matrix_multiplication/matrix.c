@@ -65,9 +65,9 @@ void tile_multiplication(const int lda, const double *matrix_a,
     matrix b is n by n, column major
     matrix c is n by n, column major
 */
-void tile_square_matrix_multiplication(const int n, const double *matrix_a,
+void tile_square_matrix_multiplication(int n, const double *matrix_a,
 				       const double *matrix_b, double *matrix_c,
-				       const int tile_size)
+				       int tile_size)
 {
 	/*
         Implement tile square matrix multiplication!!
@@ -79,6 +79,9 @@ void tile_square_matrix_multiplication(const int n, const double *matrix_a,
 		naive_matrix_multiplication(matrix_a, matrix_b, matrix_c, n, n,
 					    n);
 		return;
+	}
+	if (tile_size > n) {
+		tile_size = n;
 	}
 	double *tile_a =
 		(double *)calloc(tile_size * tile_size, sizeof(double));
