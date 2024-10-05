@@ -63,7 +63,33 @@ We will analyze the cache memory behavior of the algorithm and optimize it using
 
 To realize this laboratory, we will use the an `Nvidia® Jetson Orin Nano`.
 
+To realize measurements, we will use the return of the `main` function and the `perf` command to measure the number of cache loads and misses for the general naive and tile implementation. To simplify the process, we will use a script to take measurements easily. 
 
+If you want to use the script, be sure taht you have the `perf` command installed on your system this `python3` libraries:
+- `matplotlib`
+- `tqdm` (To show progress bar and to be sure that the script is running)
+
+Here is the usage of `perf.py` script:
+
+```sh
+python3 perf.py -h
+usage: perf.py [-h] -s START -e END -i INCREMENT [-t TILE] [-c] [-T]
+
+Matrix multiplication performance script.
+
+options:
+  -h, --help            show this help message and exit
+  -s START, --start START
+                        Start matrix size.
+  -e END, --end END     End matrix size.
+  -i INCREMENT, --increment INCREMENT
+                        Increment for matrix sizes.
+  -t TILE, --tile TILE  Tile size for tiled multiplication.
+  -c, --cache           Measure cache usage.
+  -T, --time            Measure execution time.
+  -S, --save            Save the plot as an SVG file.
+  -F, --file            Name of the saved file.
+``` 
 
 ## 3. Stage 1 - Understanding matrix memory layout and matrix multiplication
 
@@ -162,30 +188,25 @@ With this function, we realize that in one of the matrixes we need to jump `N` e
 
 ## 6. Stage 4 - Measuring naïve matrix multiplication performance
 
-To measure the performance of the process, we will use a script to run the code with different matrix sizes. We will memorize the time taken to execute the multiplication and we trace a graph.
+Now that we have implemented the general matrix multiplication algorithm, we will measure the performance of the algorithm.
+
+We can mesure the time taken to execute the matrix multiplication algorithm in `seconds`.
+
+To measure the performance of the algorithm, we will use `perf.py` to run the code with different matrix sizes and tile sizes.
+
+```sh
+python3 perf.py --start 10 -e 1000 -i 100 -T -S -F naive10-1000.svg
+```
+Here is the output of the script:
+
+@import "../perf_plots/naive10-1000.svg"
+
 
 
 ## 9. Conclusion
 
-Au terme de ce laboratoire, nous avons conçu et testé un système de traitement des données audio et vidéo en utilisant la carte DE1-SoC et la librairie Xenomai. Nous avons évalué les performances de notre système en mesurant les périodes et les jitters des différentes tâches.
-
-Pour la partie audio, nous avons démontré que la gestion des priorités est cruciale pour assurer le bon fonctionnement du système. La tâche d'acquisition audio a été priorisée pour garantir une acquisition stable, tandis que les tâches de traitement et de logging ont été ajustées en conséquence.
-
-Dans la partie vidéo, nous avons exploré divers modes de traitement, allant de la simple copie à des opérations plus complexes comme l'application de filtres de niveau de gris et de convolution. Les mesures ont montré que les tâches vidéo, notamment celles impliquant des traitements complexes, sont gourmandes en temps CPU et peuvent nécessiter des ajustements de période pour respecter les conditions d'ordonnançabilité.
-
-L'utilisation des conditions d'ordonnançabilité de Liu et Layland nous a permis de vérifier si notre système pouvait fonctionner correctement sous différentes charges. Nous avons ajusté les périodes des tâches vidéo pour garantir leur ordonnançabilité, même si cela a nécessité des compromis sur la fréquence des images (framerate).
-
-Enfin, nous avons validé notre système en utilisant l'outil de mesure de temps d'exécution, garantissant que les tâches critiques respectaient les contraintes temporelles imposées.
-
-Ce laboratoire nous a permis de mieux comprendre les défis liés à l'ordonnancement de tâches en temps réel et l'importance de la gestion des priorités et des périodes pour assurer un système performant et fiable.
-
-
 ## 10. Ref
 
-- ChatGPT pour la réalisation des formules mathématiques en Latex
-- ChatGPT pour l'aide à la compréhension des problèmes liés à la gestion des buffers
-- [Markdown Preview Enhanced](https://shd101wyy.github.io/markdown-preview-enhanced/#/) pour la réalisation de ce rapport
-- Adaptation de la librairie `time_measurement` réalisée par Colin Jaques et Théodros Mulugeta.
-- Adaptation du scripts python `jitter.py` du labo03 et labo04
+- ChatGPT for the help to make the `perf.py` script
 
 
