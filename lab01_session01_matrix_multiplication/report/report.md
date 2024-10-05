@@ -42,6 +42,8 @@ Date : **05.10.2024**
 - [4. Stage 2 - Source template and compiler flags](#4-stage-2---source-template-and-compiler-flags)
 - [5. Stage 3 - Implementing general matrix multiplication](#5-stage-3---implementing-general-matrix-multiplication)
 - [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
+- [7. Stage 5 - Implementing tile square matrix multiplication](#7-stage-5---implementing-tile-square-matrix-multiplication)
+- [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
 - [9. Conclusion](#9-conclusion)
 - [10. Ref](#10-ref)
 
@@ -194,14 +196,105 @@ We can mesure the time taken to execute the matrix multiplication algorithm in `
 
 To measure the performance of the algorithm, we will use `perf.py` to run the code with different matrix sizes and tile sizes.
 
-```sh
-python3 perf.py --start 10 -e 1000 -i 100 -T -S -F naive10-1000.svg
-```
 Here is the output of the script:
 
-@import "../perf_plots/naive10-1000.svg"
+@import "../perf_plots/naive10-500.svg"
+
+On the graph, we can see that the time taken to execute the algorithm is increasing exponentially with the matrix size.
+
+## 7. Stage 5 - Implementing tile square matrix multiplication
+
+In this stage, we will implement the tile square matrix multiplication algorithm.
+This algorithm will divide the matrix into tiles and multiply the tiles to obtain the result matrix.
+
+![schema](image.png)
+<legends> source: CNM_lab01.etape1.pdf </legends>
+
+To realize this, we will implement the following function:
+
+```c
+ANDRE CODE HERE
+```
+
+With this function, we realize that we can optimize the cache memory behavior by using the tiles.
+
+## 8. Stage 6 - Measuring tile square matrix multiplication performance
+
+Now that we have implemented the tile square matrix multiplication algorithm, we will measure the performance of the algorithm.
+
+Let's execute the script on the Nvidia® Jetson Orin Nano to measure the performance of the algorithm with the same matrix sizes as [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance) but with different tile sizes.
+
+**Matrix from 10x10 to 500x500 incrementing by 10 with tile sizes from 1 to 500 incrementing with manual increments.**
+
+<table border="1" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../perf_plots/naive10-500.svg" alt="Image 1"></td>
+      <td><img src="../perf_plots/tile10-500-2.svg" alt="Image 2"></td>
+      <td><img src="../perf_plots/tile10-500-4.svg" alt="Image 3"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-500-10.svg" alt="Image 4"></td>
+      <td><img src="../perf_plots/tile10-500-20.svg" alt="Image 5"></td>
+      <td><img src="../perf_plots/tile10-500-50.svg" alt="Image 6"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-500-100.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-500-200.svg" alt="Image 8"></td>
+      <td>
+        <div>
+        <table border="1" cellpadding="10" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Tile size</th>
+      <th>Time (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>without tiling</td>
+      <td>0.82</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1.62</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>0.69</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>0.66</td>
+    </tr>
+    <tr>
+      <td>100</td>
+      <td>0.66</td>
+    </tr>
+    <tr>
+      <td>200</td>
+      <td>0.75</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 
+With these results, we can say that if you use tiles with a certain size, you can optimize the cache memory behavior and reduce the time taken to execute the algorithm.
+
+But if you use a tile size too little or to big, you can have a negative impact on the cache memory behavior and increase the time taken to execute the algorithm.
 
 ## 9. Conclusion
 
