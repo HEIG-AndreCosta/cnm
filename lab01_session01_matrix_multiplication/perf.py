@@ -68,7 +68,7 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
     os.system("gcc -O0 -o main main.c matrix.c")
 
     matrix_sizes = list(range(start_size, end_size + 1, increment))
-    title = "Tiled" if tile_size else "Naive"
+    title = f"Tiled {str(tile_size)}" if tile_size else "Naive"
 
     l1_usage = []
     l2_hit_rate = []
@@ -130,6 +130,7 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
             os.makedirs(folder)
         if filename is None:
             filename = f"plot_start{start_size}_end{end_size}_inc{increment}{'_tiled' + str(tile_size) if tile_size else '_naive'}.svg"
+
         path = os.path.join(folder, filename)
         plt.savefig(path)
         print(f"Graph saved as {filename}")
