@@ -44,6 +44,7 @@ Date : **05.10.2024**
 - [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
 - [7. Stage 5 - Implementing tile square matrix multiplication](#7-stage-5---implementing-tile-square-matrix-multiplication)
 - [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
+  - [8.1. Analysis of the performance measurements](#81-analysis-of-the-performance-measurements)
 - [9. Conclusion](#9-conclusion)
 - [10. Ref](#10-ref)
 
@@ -243,7 +244,7 @@ Let's execute the script on the Nvidia® Jetson Orin Nano to measure the perform
       <td><img src="../perf_plots/tile10-500-200.svg" alt="Image 8"></td>
       <td>
         <div>
-        <table border="1" cellpadding="10" cellspacing="0">
+        <table>
   <thead>
     <tr>
       <th>Tile size</th>
@@ -294,7 +295,55 @@ Let's execute the script on the Nvidia® Jetson Orin Nano to measure the perform
 
 With these results, we can say that if you use tiles with a certain size, you can optimize the cache memory behavior and reduce the time taken to execute the algorithm.
 
+we can also see that we have almost the same time in a certain range of sizes. Take the exemple of the `200 Tiled Matrix` graph. between the size of `~120` and `~280`, the time taken to execute the algorithm is almost the same. It's because the cache memory behavior is optimized in this range of sizes. Then we have a gap between the size of `~280` and `~300` and again the time taken to execute the algorithm is almost the same until `~350`.
+
+This `staircase` begin at the size of the tile.
+
 But if you use a tile size too little or to big, you can have a negative impact on the cache memory behavior and increase the time taken to execute the algorithm.
+
+### 8.1. Analysis of the performance measurements
+
+From the results, we can see that the time taken to execute the algorithm is decreasing with the tile size from a certain point, then it increases again when the tile size is too big.
+
+To explain this behavior, we can say that the cache memory have a certain size and the tile size must be adapted to this size to optimize the cache memory behavior.
+
+On the `Nvidia® Jetson Orin Nano`, the cache memory size are:
+| Cache | Size |
+|-------|------|
+| L1d   | 384 KiB |
+| L1i   | 384 KiB |
+| L2    | 1.5 MiB |
+| L3    | 3 MiB |
+
+regarding this command:
+
+```sh
+$ lscpu | grep -E 'L1d|L1i|L2|L3'
+L1d cache:                            384 KiB
+L1i cache:                            384 KiB
+L2 cache:                             1.5 MiB
+L3 cache:                             2 MiB
+
+```
+
+The matrix that we are using contains `double` values, which are `8 bytes` each. So, we can calculate the number of elements that we can store in the cache memory:
+$$ {L1d_{elements}} = \frac{{CacheSize_{L1d}}}{SizeOf(double)}  = \frac{384 \times 2^{10}}{8} = 49152 $$
+$$ {L1d_{Lines}} = \sqrt{49152} = 221 $$
+
+To optimize the usage of the cache memory, we need to store the $Matrix_{A}$, $Matrix_{B}$ and $Matrix_{C}$ in the cache memory.
+
+Then, we can calculate the number of elements by Matrix:
+
+$$ {MatrixElements} = \frac{{L1d_{elements}}}{3} = 16384 $$
+
+In this case, to calculate the tile size, we can use the square root of the number of elements in the matrix.
+$$ {MatrixSize} = \sqrt{16384} = 128 $$
+
+the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior. 
+
+Now that we know the size of the tile, we can compute a matrix and compare the time taken to execute the algorithm with the tile size of `128` and without tiling.
+
+
 
 ## 9. Conclusion
 
