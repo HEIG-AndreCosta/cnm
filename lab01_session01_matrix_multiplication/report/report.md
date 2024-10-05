@@ -337,7 +337,7 @@ Then, we can calculate the number of elements by Matrix:
 $$ {MatrixElements} = \frac{{L1d_{elements}}}{3} = 16384 $$
 
 In this case, to calculate the tile size, we can use the square root of the number of elements in the matrix.
-$$ {MatrixSize} = \sqrt{16384} = 128 $$
+$$ {MatrixSize} = \sqrt{16384} = 128 $$3
 
 the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior. 
 
