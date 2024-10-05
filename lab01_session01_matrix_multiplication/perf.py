@@ -129,7 +129,7 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
         if not os.path.exists(folder):
             os.makedirs(folder)
         if filename is None:
-            filename = f"perf_plots/plot_start{start_size}_end{end_size}_inc{increment}{f"_tiled{tile_size}" if tile_size else 'naive'}.svg"
+            filename = f"plot_start{start_size}_end{end_size}_inc{increment}{'_tiled' + str(tile_size) if tile_size else '_naive'}.svg"
         path = os.path.join(folder, filename)
         plt.savefig(path)
         print(f"Graph saved as {filename}")
