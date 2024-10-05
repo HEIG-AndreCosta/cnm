@@ -41,6 +41,7 @@ Date : **05.10.2024**
   - [3.2. Matrix multiplication algorithm](#32-matrix-multiplication-algorithm)
 - [4. Stage 2 - Source template and compiler flags](#4-stage-2---source-template-and-compiler-flags)
 - [5. Stage 3 - Implementing general matrix multiplication](#5-stage-3---implementing-general-matrix-multiplication)
+- [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
 - [9. Conclusion](#9-conclusion)
 - [10. Ref](#10-ref)
 
@@ -156,6 +157,13 @@ To realize this, we will implement the following function:
 ```c
 ANDRE CODE HERE
 ```
+
+With this function, we realize that in one of the matrixes we need to jump `N` elements to go to the next row. This jump will impact the cache memory behavior.
+
+## 6. Stage 4 - Measuring naïve matrix multiplication performance
+
+To measure the performance of the process, we will use a script to run the code with different matrix sizes. We will memorize the time taken to execute the multiplication and we trace a graph.
+
 
 ## 9. Conclusion
 
