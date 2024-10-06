@@ -28,22 +28,22 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
         if len(parts) < 2:
             continue
         print(parts)
-        if "l1d_cache" in parts[2]:
+        if "l1d_cache_lmiss_rd" in parts[2]:
             try:
                 stats["L1-loads"] = int(parts[0].replace(",", ""))
             except ValueError:
                 continue
-        elif "l1d_cache_lmiss_rd" in parts[2]:
+        elif "l1d_cache" in parts[2]:
             try:
                 stats["L1-misses"] = int(parts[0].replace(",", ""))
             except ValueError:
                 continue
-        elif "l2d_cache" in parts[2]:
+        elif "l2d_cache_lmiss_rd" in parts[2]:
             try:
                 stats["L2-misses"] = int(parts[0].replace(",", ""))
             except ValueError:
                 continue
-        elif "l2d_cache_lmiss_rd" in parts[2]:
+        elif "l2d_cache" in parts[2]:
             try:
                 stats["L2-loads"] = int(parts[0].replace(",", ""))
             except ValueError:
