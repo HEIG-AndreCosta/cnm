@@ -45,6 +45,10 @@ Date : **05.10.2024**
 - [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
 - [7. Stage 5 - Implementing tile square matrix multiplication](#7-stage-5---implementing-tile-square-matrix-multiplication)
 - [7.1. Tests (Bonus)](#71-tests-bonus)
+- [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
+  - [8.1. Analysis of the performance measurements](#81-analysis-of-the-performance-measurements)
+- [9. Conclusion](#9-conclusion)
+- [10. Ref](#10-ref)
 
 <!-- /code_chunk_output -->
 
@@ -435,6 +439,26 @@ $$ {MatrixSize} = \sqrt{16384} = 128 $$3
 the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior.
 
 Now that we know the size of the tile, we can compute a matrix and compare the time taken to execute the algorithm with the tile size of `128` and without tiling.
+
+<table border="1" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../perf_plots/naive10-1000c.svg" alt="Image 1"></td>
+      <td><img src="../perf_plots/tile10-1000-2c.svg" alt="Image 2"></td>
+      <td><img src="../perf_plots/tile10-1000-4c.svg" alt="Image 3"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-1000-10c.svg" alt="Image 4"></td>
+      <td><img src="../perf_plots/tile10-1000-20c.svg" alt="Image 5"></td>
+      <td><img src="../perf_plots/tile10-1000-50c.svg" alt="Image 6"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-1000-100c.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-1000-120c.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-1000-200c.svg" alt="Image 8"></td>
+    </tr>
+  </tbody>
+</table>
 
 ## 9. Conclusion
 
