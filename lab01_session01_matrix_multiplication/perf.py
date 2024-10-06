@@ -40,12 +40,12 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
                 continue
         elif "l2d_cache_lmiss_rd" in parts[2]:
             try:
-                stats["L2-loads"] = int(parts[0].replace(",", ""))
+                stats["L2-misses"] = int(parts[0].replace(",", ""))
             except ValueError:
                 continue
         elif "l2d_cache" in parts[2]:
             try:
-                stats["L2-misses"] = int(parts[0].replace(",", ""))
+                stats["L2-loads"] = int(parts[0].replace(",", ""))
             except ValueError:
                 continue
     
@@ -78,12 +78,12 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
             stats = get_cache_stats("./main", matrix_size, tile_size)
             print(stats)  
             if stats["L1-loads"] > 0:
-                l1_hit_rate = (stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"] * 100
+                l1_hit_rate = ((stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"]) * 100
             else:
                 l1_hit_rate = 0
 
             if stats["L2-loads"] > 0:
-                l2_hit_rate_value = (stats["L2-loads"] - stats["L2-misses"]) / stats["L2-loads"] * 100
+                l2_hit_rate_value = ((stats["L2-loads"] - stats["L2-misses"]) / stats["L2-loads"] )* 100
             else:
                 l2_hit_rate_value = 0
 
