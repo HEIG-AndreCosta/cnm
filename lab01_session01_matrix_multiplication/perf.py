@@ -25,7 +25,6 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
     
     for line in result.split("\n"):
         parts = line.split(",")
-        print(parts)
         if len(parts) < 2:
             continue
         if "l1d_cache_lmiss_rd" in parts[2]:
@@ -75,8 +74,7 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
 
     for matrix_size in tqdm(matrix_sizes, desc="Running Matrix Multiplication", unit="matrix"):
         if measure_cache:
-            stats = get_cache_stats("./main", matrix_size, tile_size)
-            print(stats)  
+            stats = get_cache_stats("./main", matrix_size, tile_size) 
             if stats["L1-loads"] > 0:
                 l1_hit_rate = ((stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"]) * 100
             else:
