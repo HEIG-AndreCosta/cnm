@@ -41,6 +41,7 @@ Date : **05.10.2024**
   - [3.2. Matrix multiplication algorithm](#32-matrix-multiplication-algorithm)
 - [4. Stage 2 - Source template and compiler flags](#4-stage-2---source-template-and-compiler-flags)
 - [5. Stage 3 - Implementing general matrix multiplication](#5-stage-3---implementing-general-matrix-multiplication)
+- [5.1 Stage 3 - Tests (Bonus)](#51-stage-3---tests-bonus)
 - [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
 - [7. Stage 5 - Implementing tile square matrix multiplication](#7-stage-5---implementing-tile-square-matrix-multiplication)
 - [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
@@ -58,7 +59,7 @@ This lab is written in Markdown format optimized for the interpreter used by the
 
 ## 1. Introduction
 
-The objective of this session is to explore and optimize the matrix multiplication algorithm. 
+The objective of this session is to explore and optimize the matrix multiplication algorithm.
 
 We will analyze the cache memory behavior of the algorithm and optimize it using the tiling technique.
 
@@ -66,11 +67,15 @@ We will analyze the cache memory behavior of the algorithm and optimize it using
 
 To realize this laboratory, we will use the an `Nvidia® Jetson Orin Nano`.
 
-To realize measurements, we will use the return of the `main` function and the `perf` command to measure the number of cache loads and misses for the general naive and tile implementation. To simplify the process, we will use a script to take measurements easily. 
+To realize measurements, we will use the return of the `main` function and the `perf` command to measure the number of cache loads and misses for the general naive and tile implementation. To simplify the process, we will use a script to take measurements easily.
 
-If you want to use the script, be sure taht you have the `perf` command installed on your system this `python3` libraries:
-- `matplotlib`
-- `tqdm` (To show progress bar and to be sure that the script is running)
+If you want to use the script, be sure that you have the `perf` command installed on your system.
+
+In order to run the script, make sure you install the required libraries:
+
+```sh
+pip install -r requirements.txt
+```
 
 Here is the usage of `perf.py` script:
 
@@ -92,44 +97,26 @@ options:
   -T, --time            Measure execution time.
   -S, --save            Save the plot as an SVG file.
   -F, --file            Name of the saved file.
-``` 
+```
 
 ## 3. Stage 1 - Understanding matrix memory layout and matrix multiplication
 
-In this first part, we will analyze the memory layout datas and the matrix multiplication algorithm.
+In this first part, we will analyze the data memory layout and the matrix multiplication algorithm.
 
 ### 3.1. Memory layout
 
-The memory layout is an important aspect of the matrix multiplication algorithm. 
-The best optimization is to have two matrixes with one in `row-major` order and the other in `column-major` order.
+The memory layout is an important aspect of the matrix multiplication algorithm.
 
-With this layout, the algorithm can access the memory in a linear way, which is the best way to use the cache memory.
+Here we will be working with a `column-major` memory layout. Which means that the following `3 x 4` matrix:
+$$ {Matrix} = \begin{bmatrix} 0 & 1 & 2 & 3 \\ 4 & 5 & 6 & 7 \\ 8 & 9 & 10 & 11 \end{bmatrix} $$
 
-In our case we have two matrixes `A` and `B` in column-major order and the result matrix `C` in row-major order.
+will be stored in memory like this:
 
-Column-major representation with indexes for a `3 x 4` matrix in memory:
-
-$$ {Memory} = \begin{bmatrix} 0 & 3 & 6 & 9 & 1 & 4 & 7 & 10 & 2 & 5 & 8 & 11 \end{bmatrix} $$
-
-Row-major representation with indexes for a `3 x 4` matrix in memory:
-
-$$ {Memory} = \begin{bmatrix} 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \end{bmatrix} $$
-
-Representation of a column major table 2D `3 x 4`:
-
-$$ {Matrix} = \begin{bmatrix} 0 & 3 & 6 & 9 \\ 1 & 4 & 7 & 10 \\ 2 & 5 & 8 & 11 \end{bmatrix} $$
-
-Representation of a row major table 2D `3 x 4`:
-
-$$ {Matrix} = \begin{bmatrix} 0 & 1 & 2 \\ 3 & 4 & 5 \\ 6 & 7 & 8 \\ 9 & 10 & 11 \end{bmatrix} $$
-
-From this analysis, we can see that the switch from column-major to row-major order is a simple transposition of the matrix.
-
-$$ {ColumnMajor} = {RowMajor}^T $$
+$$ {Memory} = \begin{bmatrix} 0 & 4 & 8 & 1 & 5 & 9 & 2 & 6 & 10 & 3 & 7 & 11 \end{bmatrix} $$
 
 ### 3.2. Matrix multiplication algorithm
 
-For a simple matrix $N \times N$ multiplication algorithm with range of data in row-major memory. 
+For a simple matrix $N \times N$ multiplication algorithm with range of data in row-major memory.
 
 ```c
 void naive_square_matrix_multiplication(const int n, const double *matrix_a,
@@ -151,43 +138,115 @@ void naive_square_matrix_multiplication(const int n, const double *matrix_a,
 		}
 	}
 }
-
-``` 
+```
 
 ## 4. Stage 2 - Source template and compiler flags
 
 For this session, we will compile the code without any optimization flags.
 
 ```sh
-gcc -o main main.c
+gcc -O0 -o main main.c
 ```
-In the next part of the lab, we will implement the tiling technique to optimize the matrix multiplication algorithm.
 
-We have these commands to run the code:
+In the next part of the lab, we will implement the general mutliplication algorthm which we can use to multiply two matrixes of different sizes.
 
-```sh
-# 100x100 matrix multiplication
-./main 100
-# 100x100 tiling matrix multiplication with tile size 5x5
-./main 100 5
-```
 <legends> source: CNM_lab01.etape1.pdf </legends>
 
 The output of the code will be the time taken to execute the matrix multiplication algorithm in `seconds`.
 
 ## 5. Stage 3 - Implementing general matrix multiplication
 
+The general matrix multiplication algorithm is a simple algorithm that multiplies two matrixes of different sizes.
+
+Like we said previously, the matrixes are stored in memory in a column-major order.
+
 In this stage, we will implement the general matrix multiplication algorithm to multiply two matrixes $A = M \times N$ and $B = N \times K$ to obtain the matrix $C = M \times K$.
 
-$$ A \begin{bmatrix} a_{11} & a_{12} & \cdots & a_{1N} \\ a_{21} & a_{22} & \cdots & a_{2N} \\ \vdots & \vdots & \ddots & \vdots \\ a_{M1} & a_{M2} & \cdots & a_{MN} \end{bmatrix} \times B \begin{bmatrix} b_{11} & b_{12} & \cdots & b_{1K} \\ b_{21} & b_{22} & \cdots & b_{2K} \\ \vdots & \vdots & \ddots & \vdots \\ b_{N1} & b_{N2} & \cdots & b_{NK} \end{bmatrix} = C \begin{bmatrix} c_{11} & c_{12} & \cdots & c_{1K} \\ c_{21} & c_{22} & \cdots & c_{2K} \\ \vdots & \vdots & \ddots & \vdots \\ c_{M1} & c_{M2} & \cdots & c_{MK} \end{bmatrix} $$
+$$ A \begin{bmatrix} a*{11} & a*{12} & \cdots & a*{1N} \\ a*{21} & a*{22} & \cdots & a*{2N} \\ \vdots & \vdots & \ddots & \vdots \\ a*{M1} & a*{M2} & \cdots & a*{MN} \end{bmatrix} \times B \begin{bmatrix} b*{11} & b*{12} & \cdots & b*{1K} \\ b*{21} & b*{22} & \cdots & b*{2K} \\ \vdots & \vdots & \ddots & \vdots \\ b*{N1} & b*{N2} & \cdots & b*{NK} \end{bmatrix} = C \begin{bmatrix} c*{11} & c*{12} & \cdots & c*{1K} \\ c*{21} & c*{22} & \cdots & c*{2K} \\ \vdots & \vdots & \ddots & \vdots \\ c*{M1} & c*{M2} & \cdots & c\_{MK} \end{bmatrix} $$
 
-To realize this, we will implement the following function:
+In order to realize this, here's an example using `M = 3`, `N = 4` and `K = 2`.
+
+![](./non_square_matrix_multiplication.png)
+
+In order to multiply 2 matrix, we will have 3 loops.
+First one will iterate over the rows of the first matrix, the second one will iterate over the columns of the second matrix and the last one will iterate over the columns of the first matrix and the rows of the second matrix.
+
+So taking this into account, we can define three variables
+
+- `i` to iterate over the rows of the first matrix.
+  - `i ∈ [0, M[`
+- `j` to iterate over the columns of the second matrix
+  - `j ∈ [0, N[`
+- `k` to iterate over the columns of the first matrix and the rows of the second matrix
+  - `k ∈ [0, K[`
+
+Calculating the index of the element in the matrix is a bit tricky. We need to take into account the column-major order of the matrix.
+
+| i   | j   | k   | index_a | index_b | index_c |
+| --- | --- | --- | ------- | ------- | ------- |
+| 0   | 0   | 0   | 0       | 0       | 0       |
+| 0   | 0   | 1   | 3       | 1       | 0       |
+| 0   | 1   | 0   | 0       | 2       | 3       |
+| 0   | 1   | 1   | 3       | 3       | 3       |
+| 0   | 2   | 0   | 0       | 4       | 6       |
+| 0   | 2   | 1   | 3       | 5       | 6       |
+| 0   | 3   | 0   | 0       | 6       | 9       |
+| 0   | 3   | 1   | 3       | 7       | 9       |
+| ... | ... | ... | ...     | ...     | ...     |
+| 2   | 0   | 0   | 2       | 0       | 2       |
+| 2   | 0   | 1   | 5       | 1       | 2       |
+| 2   | 1   | 0   | 2       | 2       | 5       |
+| 2   | 1   | 1   | 5       | 3       | 5       |
+| 2   | 2   | 0   | 2       | 4       | 8       |
+| 2   | 2   | 1   | 5       | 5       | 8       |
+| 2   | 3   | 0   | 2       | 6       | 11      |
+| 2   | 3   | 1   | 5       | 7       | 11      |
+
+With this information, we can deduce the following formula to calculate the index of the element in the matrix:
+
+$$ {index_a} = i + k \times M $$
+$$ {index_b} = k + j \times K $$
+$$ {index_c} = n + j \times M $$
+
+Putting this all together:
 
 ```c
-ANDRE CODE HERE
+void naive_matrix_multiplication(const double *matrix_a, const double *matrix_b,
+				 double *matrix_c, const int M, const int N,
+				 const int K)
+{
+	for (int i = 0; i < M; ++i) {
+		for (int j = 0; j < N; ++j) {
+			double sum = 0;
+			for (int k = 0; k < K; ++k) {
+				double ai = matrix_a[k * M + i];
+				double bj = matrix_b[j * K + k];
+				sum += ai * bj;
+			}
+			matrix_c[j * M + i] = sum;
+		}
+	}
+}
 ```
 
-With this function, we realize that in one of the matrixes we need to jump `N` elements to go to the next row. This jump will impact the cache memory behavior.
+With this function, the access to the matrix B is linear, but the access to matrix A and C are not.
+
+We can see that inside the inner loop (k), we jump `M` elements to go to the next row of the matrix A. If the `M` value is big and the cache memory cannot contain all the elements of the matrix, we will have a lot of cache misses which will impact the performance of the algorithm.
+
+## 5.1 Stage 3 - Tests (Bonus)
+
+In order to test our implementation, we created a test function that will compare the result of the naive matrix multiplication with the result of an online matrix multiplication calculator.
+
+This test can be found in [test.c](../src/test.c).
+
+In order to run the test, you can use the following command:
+
+```bash
+gcc -o test test.c matrix.c
+./test
+```
+
+This is also the reason we moved the function out of the main.c file and created a [matrix.c](../src/matrix.c) file.
 
 ## 6. Stage 4 - Measuring naïve matrix multiplication performance
 
@@ -292,7 +351,6 @@ Let's execute the script on the Nvidia® Jetson Orin Nano to measure the perform
   </tbody>
 </table>
 
-
 With these results, we can say that if you use tiles with a certain size, you can optimize the cache memory behavior and reduce the time taken to execute the algorithm.
 
 we can also see that we have almost the same time in a certain range of sizes. Take the exemple of the `200 Tiled Matrix` graph. between the size of `~120` and `~280`, the time taken to execute the algorithm is almost the same. It's because the cache memory behavior is optimized in this range of sizes. Then we have a gap between the size of `~280` and `~300` and again the time taken to execute the algorithm is almost the same until `~350`.
@@ -310,10 +368,10 @@ To explain this behavior, we can say that the cache memory have a certain size a
 On the `Nvidia® Jetson Orin Nano`, the cache memory size are:
 | Cache | Size |
 |-------|------|
-| L1d   | 384 KiB |
-| L1i   | 384 KiB |
-| L2    | 1.5 MiB |
-| L3    | 3 MiB |
+| L1d | 384 KiB |
+| L1i | 384 KiB |
+| L2 | 1.5 MiB |
+| L3 | 3 MiB |
 
 regarding this command:
 
@@ -327,8 +385,8 @@ L3 cache:                             2 MiB
 ```
 
 The matrix that we are using contains `double` values, which are `8 bytes` each. So, we can calculate the number of elements that we can store in the cache memory:
-$$ {L1d_{elements}} = \frac{{CacheSize_{L1d}}}{SizeOf(double)}  = \frac{384 \times 2^{10}}{8} = 49152 $$
-$$ {L1d_{Lines}} = \sqrt{49152} = 221 $$
+$$ {L1d*{elements}} = \frac{{CacheSize*{L1d}}}{SizeOf(double)} = \frac{384 \times 2^{10}}{8} = 49152 $$
+$$ {L1d\_{Lines}} = \sqrt{49152} = 221 $$
 
 To optimize the usage of the cache memory, we need to store the $Matrix_{A}$, $Matrix_{B}$ and $Matrix_{C}$ in the cache memory.
 
@@ -339,16 +397,16 @@ $$ {MatrixElements} = \frac{{L1d_{elements}}}{3} = 16384 $$
 In this case, to calculate the tile size, we can use the square root of the number of elements in the matrix.
 $$ {MatrixSize} = \sqrt{16384} = 128 $$3
 
-the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior. 
+the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior.
 
 Now that we know the size of the tile, we can compute a matrix and compare the time taken to execute the algorithm with the tile size of `128` and without tiling.
 
-
-
 ## 9. Conclusion
+
+The best optimization is to have two matrixes with one in `row-major` order and the other in `column-major` order.
+
+With this layout, the algorithm can access the memory in a linear way, which is the best way to use the cache memory.
 
 ## 10. Ref
 
 - ChatGPT for the help to make the `perf.py` script
-
-
