@@ -9,7 +9,7 @@ from tqdm import tqdm
 def get_cache_stats(executable, matrix_size, tile_size=None):
     command = [
         "sudo", "perf", "stat", "-x,", "-e",
-        "L1-dcache-loads,L1-dcache-load-misses,l2_rqsts.demand_data_rd_miss,l2_rqsts.all_demand_data_rd"
+        "l1d_cache,l1d_cache_lmiss_rd,l2d_cache,l2d_cache_lmiss_rd"
     ]
     
     if tile_size:
