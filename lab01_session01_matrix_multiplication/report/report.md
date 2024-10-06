@@ -255,7 +255,7 @@ To measure the performance of the algorithm, we will use `perf.py` to run the co
 
 Here is the output of the script:
 
-![]("../perf_plots/plot_start10_end500_inc1_naive.svg")
+![](../perf_plots/plot_start10_end500_inc1_naive.svg)
 
 On the graph, we can see that the time taken to execute the algorithm is increasing exponentially with the matrix size.
 
