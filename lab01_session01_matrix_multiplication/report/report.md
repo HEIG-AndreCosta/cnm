@@ -44,10 +44,7 @@ Date : **05.10.2024**
 - [5.1 Stage 3 - Tests (Bonus)](#51-stage-3---tests-bonus)
 - [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance)
 - [7. Stage 5 - Implementing tile square matrix multiplication](#7-stage-5---implementing-tile-square-matrix-multiplication)
-- [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
-  - [8.1. Analysis of the performance measurements](#81-analysis-of-the-performance-measurements)
-- [9. Conclusion](#9-conclusion)
-- [10. Ref](#10-ref)
+- [7.1. Tests (Bonus)](#71-tests-bonus)
 
 <!-- /code_chunk_output -->
 
@@ -258,7 +255,7 @@ To measure the performance of the algorithm, we will use `perf.py` to run the co
 
 Here is the output of the script:
 
-@import "../perf_plots/naive10-500.svg"
+@import "../perf_plots/plot_start10_end500_inc1_naive.svg"
 
 On the graph, we can see that the time taken to execute the algorithm is increasing exponentially with the matrix size.
 
@@ -270,13 +267,51 @@ This algorithm will divide the matrix into tiles and multiply the tiles to obtai
 ![schema](image.png)
 <legends> source: CNM_lab01.etape1.pdf </legends>
 
-To realize this, we will implement the following function:
+In order to do this, we will copy the two input tiles into a new matrix and multiply the two tiles to obtain the result tile.
+We will do this until we have multiplied all the tiles in the row and column.
 
-```c
-ANDRE CODE HERE
+Here's an overview using a `6x6` matrix and a tile size of `2`.
+
+![](./tile_multiplication.png)
+
+After following the same steps as the general matrix, we were able to deduce the following algorithm that can be found in the [matrix.c](../src/matrix.c) file.
+
+Since the code is a bit long, we will not put it here.
+
+## 7.1. Tests (Bonus)
+
+Like the naive implementation, we also created a test function that will compare the result of the tile matrix multiplication with the result of an online matrix multiplication calculator.
+
+For this function we also added some edge cases:
+
+- Tile size == 1
+- Tile size a multiple of the matrix size
+- Tile size not a multiple of the matrix size
+- Tile size > matrix size
+
+The test can be found in [test_tile.c](../src/test_tile.c).
+
+In order to run the test, you can use the following command:
+
+```bash
+gcc -o test_tile test_tile.c matrix.c
+./test_tile
 ```
 
-With this function, we realize that we can optimize the cache memory behavior by using the tiles.
+To simplify the process of running tests, a bash script was created that runs all the tests
+
+```bash
+./test.sh
+
+Naive Matrix Multiplication OK
+Tile Matrix Multiplication (N = 6 Tile Size = 1) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 2) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 3) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 4) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 5) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 6) OK
+Tile Matrix Multiplication (N = 6 Tile Size = 7) OK
+```
 
 ## 8. Stage 6 - Measuring tile square matrix multiplication performance
 
@@ -363,7 +398,7 @@ But if you use a tile size too little or to big, you can have a negative impact 
 
 From the results, we can see that the time taken to execute the algorithm is decreasing with the tile size from a certain point, then it increases again when the tile size is too big.
 
-To explain this behavior, we can say that the cache memory have a certain size and the tile size must be adapted to this size to optimize the cache memory behavior.
+This behavior is explained by the fact that the cache memory hsa a certain size and the tile size must be adapted to this size to optimize the cache memory behavior.
 
 On the `Nvidia® Jetson Orin Nano`, the cache memory size are:
 | Cache | Size |
@@ -403,10 +438,14 @@ Now that we know the size of the tile, we can compute a matrix and compare the t
 
 ## 9. Conclusion
 
-The best optimization is to have two matrixes with one in `row-major` order and the other in `column-major` order.
+In this session, we have implemented the general matrix multiplication algorithm and the tile square matrix multiplication algorithm.
 
-With this layout, the algorithm can access the memory in a linear way, which is the best way to use the cache memory.
+We were able to see that the tiling technique can optimize the cache memory behavior and reduce the time taken to execute the algorithm.
+
+With that said, we need to be smart in order to choose the right tile size if we wish to optimize the cache memory behavior. The tile size must be adapted to the cache memory size.
+
+An idea that we haven't explored yet is the memory layout of the matrix. We believe that if we mix the `row-major` and `column-major` memory layout, we can further optimize the cache memory behavior.
 
 ## 10. Ref
 
-- ChatGPT for the help to make the `perf.py` script
+- ChatGPT was used to help develop the `perf.py` script
