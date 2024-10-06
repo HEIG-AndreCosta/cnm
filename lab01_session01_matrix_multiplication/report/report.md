@@ -21,7 +21,7 @@ Professor: **Marina Zapater**
 
 Assistant : **Mehdi Akeddar**
 
-Classroom : **B03**
+Classroom : **A09**
 
 Date : **05.10.2024**
 
