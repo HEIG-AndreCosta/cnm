@@ -21,7 +21,6 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
         result = subprocess.check_output(command, stderr=subprocess.STDOUT).decode()
     except subprocess.CalledProcessError as e:
         result = e.output.decode()
-    print(result)
     stats = {"L1-loads": 0, "L1-misses": 0, "L2-misses": 0, "L2-loads": 0}
     
     for line in result.split("\n"):
@@ -77,6 +76,7 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
     for matrix_size in tqdm(matrix_sizes, desc="Running Matrix Multiplication", unit="matrix"):
         if measure_cache:
             stats = get_cache_stats("./main", matrix_size, tile_size)
+            print(stats)
             
             if stats["L1-loads"] > 0:
                 l1_hit_rate = (stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"] * 100
