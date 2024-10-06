@@ -21,14 +21,14 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
         result = subprocess.check_output(command, stderr=subprocess.STDOUT).decode()
     except subprocess.CalledProcessError as e:
         result = e.output.decode()
-
+    print(result)
     stats = {"L1-loads": 0, "L1-misses": 0, "L2-misses": 0, "L2-loads": 0}
     
     for line in result.split("\n"):
         parts = line.split(",")
         if len(parts) < 2:
             continue
-
+        print(parts)
         if "L1-dcache-loads" in parts[2]:
             try:
                 stats["L1-loads"] = int(parts[0].replace(",", ""))
