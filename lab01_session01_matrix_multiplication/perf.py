@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import os
 import subprocess
+import argparse
 from tqdm import tqdm
+
 
 # Fonction pour récupérer les statistiques du cache avec perf
 def get_cache_stats(executable, matrix_size, tile_size=None):
@@ -19,7 +21,6 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
         result = subprocess.check_output(command, stderr=subprocess.STDOUT).decode()
     except subprocess.CalledProcessError as e:
         result = e.output.decode()
-    
     stats = {"L1-loads": 0, "L1-misses": 0, "L2-misses": 0, "L2-loads": 0}
     
     for line in result.split("\n"):
@@ -49,6 +50,7 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
     
     return stats
 
+
 # Fonction pour récupérer le temps d'exécution
 def get_execution_time(executable, matrix_size, tile_size=None):
     if tile_size:
@@ -57,6 +59,7 @@ def get_execution_time(executable, matrix_size, tile_size=None):
         result = float(subprocess.check_output([executable, str(matrix_size)]).decode())
     
     return result
+
 
 def main(start_size, end_size, increment, tile_size=None, filename=None):
     print("Compiling file")
@@ -70,7 +73,7 @@ def main(start_size, end_size, increment, tile_size=None, filename=None):
     execution_times = []
 
     for matrix_size in tqdm(matrix_sizes, desc="Running Matrix Multiplication", unit="matrix"):
-        # Mesure des statistiques du cache
+        # Récupération des statistiques du cache
         stats = get_cache_stats("./main", matrix_size, tile_size)
         if stats["L1-loads"] > 0:
             l1_hit_rate = ((stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"]) * 100
@@ -85,7 +88,7 @@ def main(start_size, end_size, increment, tile_size=None, filename=None):
         l1_usage.append(l1_hit_rate)
         l2_hit_rate.append(l2_hit_rate_value)
         
-        # Mesure du temps d'exécution
+        # Récupération du temps d'exécution
         execution_time = get_execution_time("./main", matrix_size, tile_size)
         execution_times.append(execution_time)
 
@@ -93,67 +96,53 @@ def main(start_size, end_size, increment, tile_size=None, filename=None):
     folder = "perf_plots"
     if not os.path.exists(folder):
         os.makedirs(folder)
-    if filename is None:
-        filename = f"plot_start{start_size}_end{end_size}_inc{increment}{'_tiled' + str(tile_size) if tile_size else '_naive'}"
+    
+    # Temps d'exécution
+    plt.figure()
+    plt.plot(matrix_sizes, execution_times, label="Execution Time")
+    plt.ylabel("Execution Time (s)")
+    plt.xlabel("Matrix Size")
+    plt.title("Matrix Multiplication Performance - " + title)
+    plt.legend()
+    plt.savefig(os.path.join(folder, f"{filename}_t.svg"))
 
-    # Graphique du temps
-    fig1, ax1 = plt.subplots()
-    ax1.plot(matrix_sizes, execution_times, label="Execution Time")
-    ax1.set_ylabel("Execution Time (s)")
-    ax1.set_xlabel("Matrix Size")
-    ax1.set_title("Matrix Multiplication Performance - " + title)
-    ax1.legend()
-    path_time = os.path.join(folder, f"{filename}_t.svg")
-    fig1.savefig(path_time)
-    plt.close(fig1)
-    print(f"Graph du temps sauvegardé en {path_time}")
+    # L1 Cache Hit Rate
+    plt.figure()
+    plt.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
+    plt.ylabel("Cache Hit Rate (%)")
+    plt.xlabel("Matrix Size")
+    plt.title("L1 Cache Usage - " + title)
+    plt.legend()
+    plt.savefig(os.path.join(folder, f"{filename}_l1.svg"))
 
-    # Graphique L1
-    fig2, ax2 = plt.subplots()
-    ax2.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
-    ax2.set_ylabel("Cache Rate (%)")
-    ax2.set_xlabel("Matrix Size")
-    ax2.set_title("L1 Cache Usage - " + title)
-    ax2.legend()
-    path_l1 = os.path.join(folder, f"{filename}_l1.svg")
-    fig2.savefig(path_l1)
-    plt.close(fig2)
-    print(f"Graph L1 sauvegardé en {path_l1}")
-
-    # Graphique L2
-    fig3, ax3 = plt.subplots()
-    ax3.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
-    ax3.set_ylabel("Cache Rate (%)")
-    ax3.set_xlabel("Matrix Size")
-    ax3.set_title("L2 Cache Usage - " + title)
-    ax3.legend()
-    path_l2 = os.path.join(folder, f"{filename}_l2.svg")
-    fig3.savefig(path_l2)
-    plt.close(fig3)
-    print(f"Graph L2 sauvegardé en {path_l2}")
+    # L2 Cache Hit Rate
+    plt.figure()
+    plt.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    plt.ylabel("Cache Hit Rate (%)")
+    plt.xlabel("Matrix Size")
+    plt.title("L2 Cache Usage - " + title)
+    plt.legend()
+    plt.savefig(os.path.join(folder, f"{filename}_l2.svg"))
 
     # Superposition L1 et L2
-    fig4, ax4 = plt.subplots()
-    ax4.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
-    ax4.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
-    ax4.set_ylabel("Cache Rate (%)")
-    ax4.set_xlabel("Matrix Size")
-    ax4.set_title("Cache Usage - " + title)
-    ax4.legend()
-    path_l1l2 = os.path.join(folder, f"{filename}_l1l2.svg")
-    fig4.savefig(path_l1l2)
-    plt.close(fig4)
-    print(f"Graph L1 et L2 sauvegardé en {path_l1l2}")
+    plt.figure()
+    plt.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
+    plt.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    plt.ylabel("Cache Hit Rate (%)")
+    plt.xlabel("Matrix Size")
+    plt.title("L1 & L2 Cache Usage - " + title)
+    plt.legend()
+    plt.savefig(os.path.join(folder, f"{filename}_l1l2.svg"))
+
 
 if __name__ == "__main__":
-    import argparse
     parser = argparse.ArgumentParser(description="Matrix multiplication performance script.")
     
     parser.add_argument("-s", "--start", type=int, required=True, help="Start matrix size.")
     parser.add_argument("-e", "--end", type=int, required=True, help="End matrix size.")
     parser.add_argument("-i", "--increment", type=int, required=True, help="Increment for matrix sizes.")
     parser.add_argument("-t", "--tile", type=int, help="Tile size for tiled multiplication.")
-    parser.add_argument("-F", "--file", type=str, help="Base name of the saved files.")
+    parser.add_argument("-F", "--file", type=str, required=True, help="Base name for the saved files.")
 
     args = parser.parse_args()
 
