@@ -58,7 +58,7 @@ def get_execution_time(executable, matrix_size, tile_size=None):
     
     return result
 
-def main(start_size, end_size, increment, tile_size=None, save=False, filename=None):
+def main(start_size, end_size, increment, tile_size=None, filename=None):
     print("Compiling file")
     os.system("gcc -O0 -o main main.c matrix.c")
 
@@ -89,7 +89,7 @@ def main(start_size, end_size, increment, tile_size=None, save=False, filename=N
         execution_time = get_execution_time("./main", matrix_size, tile_size)
         execution_times.append(execution_time)
 
-
+    # Sauvegarde des graphiques
     folder = "perf_plots"
     if not os.path.exists(folder):
         os.makedirs(folder)
