@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import subprocess
-import argparse
 from tqdm import tqdm
-
 
 # Fonction pour récupérer les statistiques du cache avec perf
 def get_cache_stats(executable, matrix_size, tile_size=None):
@@ -21,6 +19,7 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
         result = subprocess.check_output(command, stderr=subprocess.STDOUT).decode()
     except subprocess.CalledProcessError as e:
         result = e.output.decode()
+    
     stats = {"L1-loads": 0, "L1-misses": 0, "L2-misses": 0, "L2-loads": 0}
     
     for line in result.split("\n"):
@@ -50,7 +49,6 @@ def get_cache_stats(executable, matrix_size, tile_size=None):
     
     return stats
 
-
 # Fonction pour récupérer le temps d'exécution
 def get_execution_time(executable, matrix_size, tile_size=None):
     if tile_size:
@@ -60,8 +58,7 @@ def get_execution_time(executable, matrix_size, tile_size=None):
     
     return result
 
-
-def main(start_size, end_size, increment, measure_time=False, measure_cache=False, tile_size=None, save=False, filename=None, cache_type="both"):
+def main(start_size, end_size, increment, tile_size=None, save=False, filename=None):
     print("Compiling file")
     os.system("gcc -O0 -o main main.c matrix.c")
 
@@ -73,82 +70,91 @@ def main(start_size, end_size, increment, measure_time=False, measure_cache=Fals
     execution_times = []
 
     for matrix_size in tqdm(matrix_sizes, desc="Running Matrix Multiplication", unit="matrix"):
-        if measure_cache:
-            stats = get_cache_stats("./main", matrix_size, tile_size) 
-            if stats["L1-loads"] > 0:
-                l1_hit_rate = ((stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"]) * 100
-            else:
-                l1_hit_rate = 0
+        # Mesure des statistiques du cache
+        stats = get_cache_stats("./main", matrix_size, tile_size)
+        if stats["L1-loads"] > 0:
+            l1_hit_rate = ((stats["L1-loads"] - stats["L1-misses"]) / stats["L1-loads"]) * 100
+        else:
+            l1_hit_rate = 0
 
-            if stats["L2-loads"] > 0:
-                l2_hit_rate_value = ((stats["L2-loads"] - stats["L2-misses"]) / stats["L2-loads"] )* 100
-            else:
-                l2_hit_rate_value = 0
+        if stats["L2-loads"] > 0:
+            l2_hit_rate_value = ((stats["L2-loads"] - stats["L2-misses"]) / stats["L2-loads"]) * 100
+        else:
+            l2_hit_rate_value = 0
 
-            if cache_type in ["L1", "both"]:
-                l1_usage.append(l1_hit_rate)
-            if cache_type in ["L2", "both"]:
-                l2_hit_rate.append(l2_hit_rate_value)
+        l1_usage.append(l1_hit_rate)
+        l2_hit_rate.append(l2_hit_rate_value)
         
-        if measure_time:
-            execution_time = get_execution_time("./main", matrix_size, tile_size)
-            execution_times.append(execution_time)
+        # Mesure du temps d'exécution
+        execution_time = get_execution_time("./main", matrix_size, tile_size)
+        execution_times.append(execution_time)
 
-    # Affichage des graphiques
-    if measure_cache and measure_time:
-        fig, ax1 = plt.subplots(2, 1, sharex=True)
-    else:
-        fig, ax1 = plt.subplots()
 
-    if measure_cache and measure_time:
-        ax_cache = ax1[0]
-        ax_time = ax1[1]
-    else:
-        ax_cache = ax1 if measure_cache else None
-        ax_time = ax1 if measure_time else None
+    folder = "perf_plots"
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    if filename is None:
+        filename = f"plot_start{start_size}_end{end_size}_inc{increment}{'_tiled' + str(tile_size) if tile_size else '_naive'}"
 
-    if measure_cache:
-        if cache_type in ["L1", "both"]:
-            ax_cache.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
-        if cache_type in ["L2", "both"]:
-            ax_cache.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
-        ax_cache.set_ylabel("Cache Rate (%)")
-        ax_cache.set_title("Cache Usage - " + title)
-        ax_cache.legend()
+    # Graphique du temps
+    fig1, ax1 = plt.subplots()
+    ax1.plot(matrix_sizes, execution_times, label="Execution Time")
+    ax1.set_ylabel("Execution Time (s)")
+    ax1.set_xlabel("Matrix Size")
+    ax1.set_title("Matrix Multiplication Performance - " + title)
+    ax1.legend()
+    path_time = os.path.join(folder, f"{filename}_t.svg")
+    fig1.savefig(path_time)
+    plt.close(fig1)
+    print(f"Graph du temps sauvegardé en {path_time}")
 
-    if measure_time:
-        ax_time.plot(matrix_sizes, execution_times, label="Execution Time")
-        ax_time.set_ylabel("Execution Time (s)")
-        ax_time.set_xlabel("Matrix Size")
-        ax_time.set_title("Matrix Multiplication Performance - " + title)
-        ax_time.legend()
+    # Graphique L1
+    fig2, ax2 = plt.subplots()
+    ax2.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
+    ax2.set_ylabel("Cache Rate (%)")
+    ax2.set_xlabel("Matrix Size")
+    ax2.set_title("L1 Cache Usage - " + title)
+    ax2.legend()
+    path_l1 = os.path.join(folder, f"{filename}_l1.svg")
+    fig2.savefig(path_l1)
+    plt.close(fig2)
+    print(f"Graph L1 sauvegardé en {path_l1}")
 
-    if save:
-        folder = "perf_plots"
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        if filename is None:
-            filename = f"plot_start{start_size}_end{end_size}_inc{increment}{'_tiled' + str(tile_size) if tile_size else '_naive'}.svg"
+    # Graphique L2
+    fig3, ax3 = plt.subplots()
+    ax3.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    ax3.set_ylabel("Cache Rate (%)")
+    ax3.set_xlabel("Matrix Size")
+    ax3.set_title("L2 Cache Usage - " + title)
+    ax3.legend()
+    path_l2 = os.path.join(folder, f"{filename}_l2.svg")
+    fig3.savefig(path_l2)
+    plt.close(fig3)
+    print(f"Graph L2 sauvegardé en {path_l2}")
 
-        path = os.path.join(folder, filename)
-        plt.savefig(path)
-        print(f"Graph saved as {filename}")
-    
-    plt.show()
+    # Superposition L1 et L2
+    fig4, ax4 = plt.subplots()
+    ax4.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
+    ax4.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    ax4.set_ylabel("Cache Rate (%)")
+    ax4.set_xlabel("Matrix Size")
+    ax4.set_title("Cache Usage - " + title)
+    ax4.legend()
+    path_l1l2 = os.path.join(folder, f"{filename}_l1l2.svg")
+    fig4.savefig(path_l1l2)
+    plt.close(fig4)
+    print(f"Graph L1 et L2 sauvegardé en {path_l1l2}")
 
 if __name__ == "__main__":
+    import argparse
     parser = argparse.ArgumentParser(description="Matrix multiplication performance script.")
     
     parser.add_argument("-s", "--start", type=int, required=True, help="Start matrix size.")
     parser.add_argument("-e", "--end", type=int, required=True, help="End matrix size.")
     parser.add_argument("-i", "--increment", type=int, required=True, help="Increment for matrix sizes.")
     parser.add_argument("-t", "--tile", type=int, help="Tile size for tiled multiplication.")
-    parser.add_argument("-c", "--cache", action="store_true", help="Measure cache usage.")
-    parser.add_argument("-T", "--time", action="store_true", help="Measure execution time.")
-    parser.add_argument("-S", "--save", action="store_true", help="Save the plot as an SVG file.")
-    parser.add_argument("-F", "--file",type=str, help="Name of the saved file.")
-    parser.add_argument("--cache-type", choices=["L1", "L2", "both"], default="both", help="Choose which cache to display (L1, L2, or both).")
+    parser.add_argument("-F", "--file", type=str, help="Base name of the saved files.")
 
     args = parser.parse_args()
 
-    main(args.start, args.end, args.increment, args.time, args.cache, args.tile, args.save, args.file, args.cache_type)
+    main(args.start, args.end, args.increment, args.tile, args.file)
