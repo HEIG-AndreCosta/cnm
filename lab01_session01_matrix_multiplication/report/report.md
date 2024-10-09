@@ -47,6 +47,8 @@ Date : **05.10.2024**
 - [7.1. Tests (Bonus)](#71-tests-bonus)
 - [8. Stage 6 - Measuring tile square matrix multiplication performance](#8-stage-6---measuring-tile-square-matrix-multiplication-performance)
   - [8.1. Analysis of the performance measurements](#81-analysis-of-the-performance-measurements)
+  - [8.2. Analysis of L1 cache memory behavior with different tile sizes](#82-analysis-of-l1-cache-memory-behavior-with-different-tile-sizes)
+  - [8.3. Analysis of L2 cache memory behavior with different tile sizes](#83-analysis-of-l2-cache-memory-behavior-with-different-tile-sizes)
 - [9. Conclusion](#9-conclusion)
 - [10. Ref](#10-ref)
 
@@ -323,68 +325,25 @@ Now that we have implemented the tile square matrix multiplication algorithm, we
 
 Let's execute the script on the Nvidia® Jetson Orin Nano to measure the performance of the algorithm with the same matrix sizes as [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance) but with different tile sizes.
 
-**Matrix from 10x10 to 500x500 incrementing by 10 with tile sizes from 1 to 500 incrementing with manual increments.**
+**Matrix from 10x10 to 1000 x 1000 incrementing by 10 with tile sizes from 1 to 500 incrementing with manual increments.**
 
 <table border="1" cellpadding="10" cellspacing="0">
   <tbody>
     <tr>
-      <td><img src="../perf_plots/naive10-500.svg" alt="Image 1"></td>
-      <td><img src="../perf_plots/tile10-500-2.svg" alt="Image 2"></td>
-      <td><img src="../perf_plots/tile10-500-4.svg" alt="Image 3"></td>
+      <td><img src="../perf_plots/naive10-1000_t.svg" alt="Image 1"></td>
+      <td><img src="../perf_plots/tile10-1000-2_t.svg" alt="Image 2"></td>
+      <td><img src="../perf_plots/tile10-1000-4_t.svg" alt="Image 3"></td>
     </tr>
     <tr>
-      <td><img src="../perf_plots/tile10-500-10.svg" alt="Image 4"></td>
-      <td><img src="../perf_plots/tile10-500-20.svg" alt="Image 5"></td>
-      <td><img src="../perf_plots/tile10-500-50.svg" alt="Image 6"></td>
+      <td><img src="../perf_plots/tile10-1000-10_t.svg" alt="Image 4"></td>
+      <td><img src="../perf_plots/tile10-1000-20_t.svg" alt="Image 5"></td>
+      <td><img src="../perf_plots/tile10-1000-50_t.svg" alt="Image 6"></td>
     </tr>
     <tr>
-      <td><img src="../perf_plots/tile10-500-100.svg" alt="Image 7"></td>
-      <td><img src="../perf_plots/tile10-500-200.svg" alt="Image 8"></td>
+      <td><img src="../perf_plots/tile10-1000-100_t.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-1000-200_t.svg" alt="Image 8"></td>
+      <td><img src="../perf_plots/tile10-1000-500_t.svg" alt="Image 8"></td>
       <td>
-        <div>
-        <table>
-  <thead>
-    <tr>
-      <th>Tile size</th>
-      <th>Time (s)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>without tiling</td>
-      <td>0.82</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>1.62</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>0.75</td>
-    </tr>
-    <tr>
-      <td>20</td>
-      <td>0.69</td>
-    </tr>
-    <tr>
-      <td>50</td>
-      <td>0.66</td>
-    </tr>
-    <tr>
-      <td>100</td>
-      <td>0.66</td>
-    </tr>
-    <tr>
-      <td>200</td>
-      <td>0.75</td>
-    </tr>
-  </tbody>
-</table>
-        </div>
       </td>
     </tr>
   </tbody>
@@ -445,24 +404,46 @@ Now that we know the size of the tile, we can compute a matrix and compare the t
 <table border="1" cellpadding="10" cellspacing="0">
   <tbody>
     <tr>
-      <td><img src="../perf_plots/naive10-1000c.svg" alt="Image 1"></td>
-      <td><img src="../perf_plots/tile10-1000-2c.svg" alt="Image 2"></td>
-      <td><img src="../perf_plots/tile10-1000-4c.svg" alt="Image 3"></td>
+      <td><img src="../perf_plots/naive10-1000_l1.svg" alt="Image 1"></td>
+      <td><img src="../perf_plots/tile10-1000-2_l1.svg" alt="Image 2"></td>
+      <td><img src="../perf_plots/tile10-1000-4_l1.svg" alt="Image 3"></td>
     </tr>
     <tr>
-      <td><img src="../perf_plots/tile10-1000-10c.svg" alt="Image 4"></td>
-      <td><img src="../perf_plots/tile10-1000-20c.svg" alt="Image 5"></td>
-      <td><img src="../perf_plots/tile10-1000-50c.svg" alt="Image 6"></td>
+      <td><img src="../perf_plots/tile10-1000-10_l1.svg" alt="Image 4"></td>
+      <td><img src="../perf_plots/tile10-1000-20_l1.svg" alt="Image 5"></td>
+      <td><img src="../perf_plots/tile10-1000-50_l1.svg" alt="Image 6"></td>
     </tr>
     <tr>
-      <td><img src="../perf_plots/tile10-1000-100c.svg" alt="Image 7"></td>
-      <td><img src="../perf_plots/tile10-1000-120c.svg" alt="Image 7"></td>
-      <td><img src="../perf_plots/tile10-1000-200c.svg" alt="Image 8"></td>
+      <td><img src="../perf_plots/tile10-1000-100_l1.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-1000-200_l1.svg" alt="Image 8"></td>
+      <td><img src="../perf_plots/tile10-1000-500_l1.svg" alt="Image 8"></td>
     </tr>
   </tbody>
 </table>
 
 These results show that the `128 x 128` tile size is not the best size to optimize the cache memory behavior. We can't explaint why the `50 x 50` tile size is the best size to optimize the `L1` cache memory behavior.
+
+### 8.3. Analysis of L2 cache memory behavior with different tile sizes
+<table border="1" cellpadding="10" cellspacing="0">
+  <tbody>
+    <tr>
+      <td><img src="../perf_plots/naive10-1000_l2.svg" alt="Image 1"></td>
+      <td><img src="../perf_plots/tile10-1000-2_l2.svg" alt="Image 2"></td>
+      <td><img src="../perf_plots/tile10-1000-4_l2.svg" alt="Image 3"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-1000-10_l2.svg" alt="Image 4"></td>
+      <td><img src="../perf_plots/tile10-1000-20_l2.svg" alt="Image 5"></td>
+      <td><img src="../perf_plots/tile10-1000-50_l2.svg" alt="Image 6"></td>
+    </tr>
+    <tr>
+      <td><img src="../perf_plots/tile10-1000-100_l2.svg" alt="Image 7"></td>
+      <td><img src="../perf_plots/tile10-1000-200_l2.svg" alt="Image 8"></td>
+      <td><img src="../perf_plots/tile10-1000-500_l2.svg" alt="Image 8"></td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## 9. Conclusion
 
