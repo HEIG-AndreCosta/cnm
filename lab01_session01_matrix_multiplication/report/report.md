@@ -434,9 +434,11 @@ Then, we can calculate the number of elements by Matrix:
 $$ {MatrixElements} = \frac{{L1d_{elements}}}{3} = 16384 $$
 
 In this case, to calculate the tile size, we can use the square root of the number of elements in the matrix.
-$$ {MatrixSize} = \sqrt{16384} = 128 $$3
+$$ {MatrixSize} = \sqrt{16384} = 128 $$
 
 the size of a Matrix must be maximum of $128 \times 128$ elements each to optimize the cache memory behavior.
+
+### 8.2. Analysis of L1 cache memory behavior with different tile sizes
 
 Now that we know the size of the tile, we can compute a matrix and compare the time taken to execute the algorithm with the tile size of `128` and without tiling.
 
@@ -459,6 +461,8 @@ Now that we know the size of the tile, we can compute a matrix and compare the t
     </tr>
   </tbody>
 </table>
+
+These results show that the `128 x 128` tile size is not the best size to optimize the cache memory behavior. We can't explaint why the `50 x 50` tile size is the best size to optimize the `L1` cache memory behavior.
 
 ## 9. Conclusion
 
