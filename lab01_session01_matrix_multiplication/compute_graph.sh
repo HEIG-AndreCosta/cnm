@@ -12,3 +12,4 @@ python3 perf.py -s 10 -e 1000 -i 10 -t 20 -F tile10-1000-20
 python3 perf.py -s 10 -e 1000 -i 10 -t 50 -F tile10-1000-50
 python3 perf.py -s 10 -e 1000 -i 10 -t 100 -F tile10-1000-100
 python3 perf.py -s 10 -e 1000 -i 10 -t 200 -F tile10-1000-200
+python3 perf.py -s 10 -e 1000 -i 10 -t 500 -F tile10-1000-500
