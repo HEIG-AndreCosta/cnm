@@ -1,5 +1,9 @@
 #/bin/bash
 
+# set env
+
+source /venv/bin/activate
+
 # Duration measurement
 
 python3 perf.py --start 10 -e 1000 -i 10 -T -S -F naive10-1000.svg
