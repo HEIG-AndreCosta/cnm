@@ -1,5 +1,4 @@
 import subprocess
-from matplotlib.pyplot import plt
 import os
 
 
