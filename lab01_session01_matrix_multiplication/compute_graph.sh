@@ -4,4 +4,4 @@
 
 source /venv/bin/activate
 
-python3 perf.py -s 0 -e 1024 -i 6 -F matrix-1024
+python3 perf.py -m 1024 -s 0 -e 1024 -i 16 -F matrix-1024
