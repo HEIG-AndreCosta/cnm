@@ -29,15 +29,10 @@ def main():
         for image, target in zip(images, targets)
     ]
     for process in procs:
-        process["process"].wait()
-        process["output"] = float(process["process"].stdout.decode())
-
-    for process in procs:
+        output, _ = process["process"].communicate()
         target = process["target"]
         image = process["image"]
-        output = process["output"]
         rows, cols, time = output.split(", ")
-
         print(f"{target} {image} rows: {rows} cols: {cols} time:{time}")
 
 
