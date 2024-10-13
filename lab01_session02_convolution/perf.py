@@ -33,7 +33,7 @@ def main():
                 output_tab += f"{rows}|{cols}|{time}|"
             else:
                 output_tab += f"{time}|"
-            output_tab += "\n"
+        output_tab += "\n"
 
     print(output_tab)
 
