@@ -21,7 +21,7 @@ def main():
             "image": image,
             "target": target,
             "process": subprocess.Popen(
-                [target, image],
+                [f"./{target}", image],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
             ),
