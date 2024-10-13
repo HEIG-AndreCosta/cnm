@@ -35,7 +35,7 @@ def main():
                 base_time = time
                 output_tab += f"{rows}|{cols}|{time} (+0)|"
             else:
-                output_tab += f"{time} ({(base_time - time):+})|"
+                output_tab += f"{time} ({(time - base_time):+})|"
         output_tab += "\n"
 
     print(output_tab)
