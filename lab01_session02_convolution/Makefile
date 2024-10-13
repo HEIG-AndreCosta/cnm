@@ -18,13 +18,13 @@ LFLAGS			= -lopencv_imgcodecs -lopencv_core
 all: edge_detection_no_unroll edge_detection_manual_unroll edge_detection_compiler_unroll
 
 edge_detection_no_unroll: edge_detection_no_unroll.o
-	$(CC) $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) $< -o $@ $(LFLAGS)
 
 edge_detection_manual_unroll: edge_detection_manual_unroll.o
-	$(CC) $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) $< -o $@ $(LFLAGS)
 
 edge_detection_compiler_unroll: edge_detection_compiler_unroll.o
-	$(CC) $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) $< -o $@ $(LFLAGS)
 
 # create/compile the individual files >>separately<<
 edge_detection_no_unroll.o: edge_detection.cpp
