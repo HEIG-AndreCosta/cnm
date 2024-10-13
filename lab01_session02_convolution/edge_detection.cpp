@@ -85,7 +85,7 @@ int main(int argc, char const *argv[])
 			Gy[i][j] += sobel_y[2][2] * A[2][2];
 		}
 	}
-}
+
 #else
 	for (int i = 1; i < image_rows - 1; ++i) {
 		for (int j = 1; j < image_cols - 1; ++j) {
@@ -104,35 +104,38 @@ int main(int argc, char const *argv[])
 	}
 #endif
 
-/* **************************************************************************************** */
+	/* **************************************************************************************** */
 
-//Stop measuring time
-auto end = std::chrono::high_resolution_clock::now();
+	//Stop measuring time
+	auto end = std::chrono::high_resolution_clock::now();
 
-// Total gradient
-uchar G[image_rows][image_cols];
+	// Total gradient
+	uchar G[image_rows][image_cols];
 
-for (int i = 0; i < image_rows; ++i) {
-	for (int j = 0; j < image_cols; ++j) {
-		// Gradient is the square root of the sum of the squared gradients
-		double value = std::sqrt(std::pow(Gx[i][j], 2) +
-					 std::pow(Gy[i][j], 2));
-		// Trunk value into range
-		G[i][j] = std::max(0., std::min(255., value));
+	for (int i = 0; i < image_rows; ++i) {
+		for (int j = 0; j < image_cols; ++j) {
+			// Gradient is the square root of the sum of the squared gradients
+			double value = std::sqrt(std::pow(Gx[i][j], 2) +
+						 std::pow(Gy[i][j], 2));
+			// Trunk value into range
+			G[i][j] = std::max(0., std::min(255., value));
+		}
 	}
-}
 
-// Calculate how long took convolution
-auto duration =
-	std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+	// Calculate how long took convolution
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+		end - start);
 
-std::cout << image_rows << ", " << image_cols << ", " << duration.count()
-	  << std::endl;
+	std::cout << image_rows << ", " << image_cols << ", "
+		  << duration.count() << std::endl;
 
-// Save gradients as images
-imwrite(base_name + "_x.png", Mat(image_rows, image_cols, CV_32SC1, Gx));
-imwrite(base_name + "_y.png", Mat(image_rows, image_cols, CV_32SC1, Gy));
-imwrite(base_name + "_edges.png", Mat(image_rows, image_cols, CV_8UC1, G));
+	// Save gradients as images
+	imwrite(base_name + "_x.png",
+		Mat(image_rows, image_cols, CV_32SC1, Gx));
+	imwrite(base_name + "_y.png",
+		Mat(image_rows, image_cols, CV_32SC1, Gy));
+	imwrite(base_name + "_edges.png",
+		Mat(image_rows, image_cols, CV_8UC1, G));
 
-return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
