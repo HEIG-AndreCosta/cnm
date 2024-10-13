@@ -33,7 +33,7 @@ def main():
             time = int(time)
             if i == 0:
                 base_time = time
-                output_tab += f"{rows}|{cols}|{time} (+0)"
+                output_tab += f"{rows}|{cols}|{time} (+0)|"
             else:
                 output_tab += f"{time} ({(base_time - time):+})|"
         output_tab += "\n"
