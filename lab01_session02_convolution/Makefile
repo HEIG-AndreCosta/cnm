@@ -28,13 +28,13 @@ edge_detection_compiler_unroll: edge_detection_compiler_unroll.o
 
 # create/compile the individual files >>separately<<
 edge_detection_no_unroll.o: edge_detection.cpp
-	$(CC) $(NORMAL_FLAGS) $<
+	$(CC) $(NORMAL_FLAGS) -o $@ $<
 
 edge_detection_manual_unroll.o: edge_detection.cpp
-	$(CC) $(MANUAL_UNROLL_FLAGS) $<
+	$(CC) $(MANUAL_UNROLL_FLAGS) -o $@ $<
 
 edge_detection_compiler_unroll.o: edge_detection.cpp
-	$(CC) $(COMPILER_UNROLL_FLAGS) $<
+	$(CC) $(COMPILER_UNROLL_FLAGS) -o $@ $<
 
 # clean house
 clean:
