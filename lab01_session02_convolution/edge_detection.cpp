@@ -13,7 +13,7 @@ int sobel_y[3][3] = { { 1, 2, 1 }, { 0, 0, 0 }, { -1, -2, -1 } };
 
 int main(int argc, char const *argv[])
 {
-	if (argc != 2) {
+	if (argc < 2) {
 		std::cout << "Usage " << argv[0] << " image_file" << std::endl;
 		return EXIT_FAILURE;
 	}
