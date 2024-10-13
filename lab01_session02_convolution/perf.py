@@ -20,8 +20,8 @@ def main():
     ]
     images = images_paths()
 
-    output_tab = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
-    output_tab += "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
+    output_tab = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling) (-O0)| Conv. time (SW loop unrolling) (-O1)| Conv. time (SW loop unrolling) (-O2)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
+    output_tab += "|--------|-|-|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
     base_time = 0
     for image in images:
         output_tab += f"|{image}|"
