@@ -20,7 +20,8 @@ int main(int argc, char const *argv[])
 	std::string image_file = std::string(argv[1]);
 	// Get filename without extention
 	std::string base_name =
-		image_file.substr(0, image_file.find_last_of('.'));
+		argc != 3 ? image_file.substr(0, image_file.find_last_of('.')) :
+			    argv[2];
 	// Open image as grayscale as OpenCV Mat
 	Mat src = imread(image_file, IMREAD_GRAYSCALE);
 
