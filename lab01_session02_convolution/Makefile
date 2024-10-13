@@ -1,6 +1,8 @@
 OBJS			= edge_detection_no_unroll.o
 OBJS			+= edge_detection_manual_unroll.o
-OBJS			+= edge_detection_compiler_unroll.o
+OBJS			+= edge_detection_compilero0_unroll.o
+OBJS			+= edge_detection_compilero1_unroll.o
+OBJS			+= edge_detection_compilero2_unroll.o
 SOURCE			= edge_detection.cpp
 HEADER			= 
 OUT			= edge_detection
@@ -13,11 +15,12 @@ COMPILERO2_UNROLL_FLAGS	= -O2 -c -Wall -I /usr/include/opencv4 -funroll-loops
 LFLAGS			= -lopencv_imgcodecs -lopencv_core
 
 
+TARGETS = edge_detection_no_unroll edge_detection_manual_unroll edge_detection_compilero0_unroll edge_detection_compilero1_unroll edge_detection_compilero2_unroll
 # -O0 disables almost all optimizations
 # -c flag generates object code for separate files
 # -Wall enable all warnings
 
-all: edge_detection_no_unroll edge_detection_manual_unroll edge_detection_compiler_unroll
+all: $(TARGETS)
 
 edge_detection_no_unroll: edge_detection_no_unroll.o
 	$(CC) $< -o $@ $(LFLAGS)
@@ -41,15 +44,15 @@ edge_detection_no_unroll.o: edge_detection.cpp
 edge_detection_manual_unroll.o: edge_detection.cpp
 	$(CC) $(MANUAL_UNROLL_FLAGS) -o $@ $<
 
-edge_detection_compilerO0_unroll.o: edge_detection.cpp
+edge_detection_compilero0_unroll.o: edge_detection.cpp
 	$(CC) $(COMPILERO0_UNROLL_FLAGS) -o $@ $<
 
-edge_detection_compilerO1_unroll.o: edge_detection.cpp
+edge_detection_compilero1_unroll.o: edge_detection.cpp
 	$(CC) $(COMPILERO1_UNROLL_FLAGS) -o $@ $<
 
-edge_detection_compilerO2_unroll.o: edge_detection.cpp
+edge_detection_compilero2_unroll.o: edge_detection.cpp
 	$(CC) $(COMPILERO2_UNROLL_FLAGS) -o $@ $<
 
 #clean house
 clean:
-	rm -f $(OBJS) $(OUT)
+	rm -f $(OBJS) $(TARGETS)
