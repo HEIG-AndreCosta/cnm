@@ -26,7 +26,7 @@ def main():
             output = subprocess.check_output(
                 [f"./{target}", image],
             ).decode()
-            print(f"Running {[f"./{target}", image]}")
+            print(f"Running {[f'./{target}', image]}")
 
             rows, cols, time = output.split(", ")
             if i == 0:
