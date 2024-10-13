@@ -28,7 +28,7 @@ def main():
             ).decode()
             print(f"Running {[f'./{target}', image]}")
 
-            rows, cols, time = output.split(", ")
+            rows, cols, time = output.strip().split(", ")
             if i == 0:
                 output_tab += f"{rows}|{cols}|{time}|"
             else:
