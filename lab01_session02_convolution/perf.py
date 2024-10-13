@@ -32,8 +32,9 @@ def main():
         for i, target in enumerate(targets):
 
             image_name = os.path.basename(image)
-            output_path = os.path.join("output", image_name, target, image_name)
-
+            output_folder = os.path.join("output", image_name, target)
+            create_if_not_exists(output_folder)
+            output_path = os.path.join(output_folder, image_name)
             output = subprocess.check_output(
                 [
                     f"./{target}",
