@@ -32,7 +32,7 @@ def main():
         output, _ = process["process"].communicate()
         target = process["target"]
         image = process["image"]
-        rows, cols, time = output.split(", ")
+        rows, cols, time = output.decode().split(", ")
         print(f"{target} {image} rows: {rows} cols: {cols} time:{time}")
 
 
