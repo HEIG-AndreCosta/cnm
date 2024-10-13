@@ -26,7 +26,8 @@ def main():
                 stdout=subprocess.PIPE,
             ),
         }
-        for image, target in zip(images, targets)
+        for image in images
+        for target in targets
     ]
     for process in procs:
         output, _ = process["process"].communicate()
