@@ -18,39 +18,24 @@ def main():
     ]
     images = images_paths()
 
-    procs = {
-        image: [
-            {
-                "target": target,
-                "process": subprocess.Popen(
-                    [f"./{target}", image],
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                ),
-            }
-            for target in targets
-        ]
-        for image in images
-    }
-    print(procs)
+    output = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
+    output += "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
+    for image in images:
+        output += f"|{image}|"
+        for i, target in enumerate(targets):
+            output = subprocess.check_output(
+                [f"./{target}", image],
+            ).decode()
+            print(f"Running {[f"./{target}", image]}")
 
-    print(
-        "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|"
-    )
-    print(
-        "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|"
-    )
-    for image_name, processes in procs.items():
-
-        print(f"|{image_name}|")
-        for i, proc in enumerate(processes):
-            output, _ = proc["process"].communicate()
-            rows, cols, time = output.decode().split(", ")
+            rows, cols, time = output.split(", ")
             if i == 0:
-                print(f"{rows}|{cols}|{time}|", end="")
+                output += f"{rows}|{cols}|{time}|"
             else:
-                print(f"{time}|", end="")
-        print("")
+                output += f"{time}|"
+            output += "\n"
+
+    print(output)
 
 
 if __name__ == "__main__":
