@@ -66,14 +66,25 @@ int main(int argc, char const *argv[])
 	for (int i = 1; i < image_rows - 1; ++i) {
 		for (int j = 1; j < image_cols - 1; ++j) {
 			Gx[i][j] += sobel_x[0][0] * A[i - 1][j - 1];
+			Gx[i][j] += sobel_y[0][0] * A[i - 1][j - 1];
 			Gx[i][j] += sobel_x[0][1] * A[i - 1][j];
+			Gx[i][j] += sobel_y[0][1] * A[i - 1][j];
 			Gx[i][j] += sobel_x[0][2] * A[i - 1][j + 1];
+			Gx[i][j] += sobel_y[0][2] * A[i - 1][j + 1];
+
 			Gx[i][j] += sobel_x[1][0] * A[i][j - 1];
+			Gx[i][j] += sobel_y[1][0] * A[i][j - 1];
 			Gx[i][j] += sobel_x[1][1] * A[i][j];
+			Gx[i][j] += sobel_y[1][1] * A[i][j];
+			Gx[i][j] += sobel_y[1][2] * A[i][j + 1];
 			Gx[i][j] += sobel_x[1][2] * A[i][j + 1];
+
 			Gx[i][j] += sobel_x[2][0] * A[i + 1][j - 1];
+			Gx[i][j] += sobel_y[2][0] * A[i + 1][j - 1];
 			Gx[i][j] += sobel_x[2][1] * A[i + 1][j];
+			Gx[i][j] += sobel_y[2][1] * A[i + 1][j];
 			Gx[i][j] += sobel_x[2][2] * A[i + 1][j + 1];
+			Gx[i][j] += sobel_y[2][2] * A[i + 1][j + 1];
 		}
 	}
 
