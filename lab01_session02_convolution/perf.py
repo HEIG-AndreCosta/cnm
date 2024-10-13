@@ -20,6 +20,7 @@ def main():
 
     output_tab = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
     output_tab += "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
+    base_time = 0
     for image in images:
         output_tab += f"|{image}|"
         for i, target in enumerate(targets):
@@ -29,10 +30,12 @@ def main():
             print(f"Running {[f'./{target}', image]}")
 
             rows, cols, time = output.strip().split(", ")
+            time = int(time)
             if i == 0:
-                output_tab += f"{rows}|{cols}|{time}|"
+                base_time = time
+                output_tab += f"{rows}|{cols}|{time} (+0)"
             else:
-                output_tab += f"{time}|"
+                output_tab += f"{time} ({(base_time - time):+})|"
         output_tab += "\n"
 
     print(output_tab)
