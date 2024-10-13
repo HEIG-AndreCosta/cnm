@@ -11,7 +11,9 @@ def main():
 
     targets = [
         "edge_detection_no_unroll",
-        "edge_detection_manual_unroll",
+        "edge_detection_manualo0_unroll",
+        "edge_detection_manualo1_unroll",
+        "edge_detection_manualo2_unroll",
         "edge_detection_compilero0_unroll",
         "edge_detection_compilero1_unroll",
         "edge_detection_compilero2_unroll",
