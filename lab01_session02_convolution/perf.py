@@ -49,7 +49,8 @@ def main():
             if i == 0:
                 print(f"{rows}|{cols}|{time}|", end="")
             else:
-                print(f"{time}|")
+                print(f"{time}|", end="")
+        print("")
 
 
 if __name__ == "__main__":
