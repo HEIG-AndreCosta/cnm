@@ -18,10 +18,10 @@ def main():
     ]
     images = images_paths()
 
-    output = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
-    output += "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
+    output_tab = "| Image  | Rows    | Columns | No Loop Unrolling | Conv. time (SW loop unrolling)| Conv. time (compiler -O0)| Conv. time (compiler -O1)| Conv. time (compiler -O2)|\n"
+    output_tab += "|--------|---------|---------|-------------------|-------------------------------|--------------------------|--------------------------|--------------------------|\n"
     for image in images:
-        output += f"|{image}|"
+        output_tab += f"|{image}|"
         for i, target in enumerate(targets):
             output = subprocess.check_output(
                 [f"./{target}", image],
@@ -30,12 +30,12 @@ def main():
 
             rows, cols, time = output.split(", ")
             if i == 0:
-                output += f"{rows}|{cols}|{time}|"
+                output_tab += f"{rows}|{cols}|{time}|"
             else:
-                output += f"{time}|"
-            output += "\n"
+                output_tab += f"{time}|"
+            output_tab += "\n"
 
-    print(output)
+    print(output_tab)
 
 
 if __name__ == "__main__":
