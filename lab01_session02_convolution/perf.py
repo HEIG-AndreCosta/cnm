@@ -2,7 +2,7 @@ import subprocess
 import os
 
 
-def images_paths() -> list[str]:
+def images_paths():
 
     return [os.path.join("images", x) for x in os.listdir("images")]
 
