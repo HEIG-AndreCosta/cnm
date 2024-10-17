@@ -7,7 +7,9 @@
 
 <img src="heig-vd.png" style="height:80px;">
 
-# <center> Session n°1 {ignore=true}
+# <center> Labo 01 {ignore=true}
+
+# <center> Session 01
 
 # <center> Matrix multiplication optimization {ignore=true}
 
