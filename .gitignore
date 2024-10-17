@@ -2,3 +2,5 @@
 !/**/
 !*.*
 *env*
+*.cache
+*compile_commands.json
