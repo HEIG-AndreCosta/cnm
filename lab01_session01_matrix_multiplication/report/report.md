@@ -261,9 +261,21 @@ To measure the performance of the algorithm, we will use `perf.py` to run the co
 
 Here is the output of the script:
 
-@import "../perf_plots/plot_start10_end500_inc1_naive.svg"
+@import "../perf_plots/naive10-1000_t.svg"
 
 On the graph, we can see that the time taken to execute the algorithm is increasing exponentially with the matrix size.
+
+We can see the behavior with these next graphs:
+
+@import "../perf_plots/naive10-1000_l1.svg"
+
+@import "../perf_plots/naive10-1000_l2.svg"
+
+@import "../perf_plots/naive10-1000_l1l2.svg"
+
+we can see that with a approximative size of `~100`, the number of cache hit of the L2 cache memory is increasing. the l1 cache memory is decreasing from `~300`.
+
+but the general hit rate is very high.
 
 ## 7. Stage 5 - Implementing tile square matrix multiplication
 
@@ -325,29 +337,10 @@ Now that we have implemented the tile square matrix multiplication algorithm, we
 
 Let's execute the script on the Nvidia® Jetson Orin Nano to measure the performance of the algorithm with the same matrix sizes as [6. Stage 4 - Measuring naïve matrix multiplication performance](#6-stage-4---measuring-naïve-matrix-multiplication-performance) but with different tile sizes.
 
-**Matrix from 10x10 to 1000 x 1000 incrementing by 10 with tile sizes from 1 to 500 incrementing with manual increments.**
+**Matrix 1024 x 1024 with tile from 0 to 1024**
 
-<table border="1" cellpadding="10" cellspacing="0">
-  <tbody>
-    <tr>
-      <td><img src="../perf_plots/naive10-1000_t.svg" alt="Image 1"></td>
-      <td><img src="../perf_plots/tile10-1000-2_t.svg" alt="Image 2"></td>
-      <td><img src="../perf_plots/tile10-1000-4_t.svg" alt="Image 3"></td>
-    </tr>
-    <tr>
-      <td><img src="../perf_plots/tile10-1000-10_t.svg" alt="Image 4"></td>
-      <td><img src="../perf_plots/tile10-1000-20_t.svg" alt="Image 5"></td>
-      <td><img src="../perf_plots/tile10-1000-50_t.svg" alt="Image 6"></td>
-    </tr>
-    <tr>
-      <td><img src="../perf_plots/tile10-1000-100_t.svg" alt="Image 7"></td>
-      <td><img src="../perf_plots/tile10-1000-200_t.svg" alt="Image 8"></td>
-      <td><img src="../perf_plots/tile10-1000-500_t.svg" alt="Image 8"></td>
-      <td>
-      </td>
-    </tr>
-  </tbody>
-</table>
+@import "../perf_plots/matrix-1024_t.svg" alt="Image 1"
+
 
 With these results, we can say that if you use tiles with a certain size, you can optimize the cache memory behavior and reduce the time taken to execute the algorithm.
 

@@ -61,18 +61,18 @@ def get_execution_time(executable, matrix_size, tile_size=None):
     return result
 
 
-def main(start_size, end_size, increment, tile_size=None, filename=None):
+def main(matrix_size, start_tile, end_tile, increment, filename=None):
     print("Compiling file")
     os.system("gcc -O0 -o main main.c matrix.c")
 
-    matrix_sizes = list(range(start_size, end_size + 1, increment))
-    title = f"Tiled {str(tile_size)}" if tile_size else "Naive"
+    tile_sizes = list(range(start_tile, end_tile + 1, increment))
+    title = f"Matrix Size {matrix_size}"
 
     l1_usage = []
     l2_hit_rate = []
     execution_times = []
 
-    for matrix_size in tqdm(matrix_sizes, desc="Running Matrix Multiplication", unit="matrix"):
+    for tile_size in tqdm(tile_sizes, desc="Running Matrix Multiplication", unit="tile"):
         # Récupération des statistiques du cache
         stats = get_cache_stats("./main", matrix_size, tile_size)
         if stats["L1-loads"] > 0:
@@ -99,37 +99,37 @@ def main(start_size, end_size, increment, tile_size=None, filename=None):
     
     # Temps d'exécution
     plt.figure()
-    plt.plot(matrix_sizes, execution_times, label="Execution Time")
+    plt.plot(tile_sizes, execution_times, label="Execution Time")
     plt.ylabel("Execution Time (s)")
-    plt.xlabel("Matrix Size")
+    plt.xlabel("Tile Size")
     plt.title("Matrix Multiplication Performance - " + title)
     plt.legend()
     plt.savefig(os.path.join(folder, f"{filename}_t.svg"))
 
     # L1 Cache Hit Rate
     plt.figure()
-    plt.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
+    plt.plot(tile_sizes, l1_usage, label="L1 Cache Hit %")
     plt.ylabel("Cache Hit Rate (%)")
-    plt.xlabel("Matrix Size")
+    plt.xlabel("Tile Size")
     plt.title("L1 Cache Usage - " + title)
     plt.legend()
     plt.savefig(os.path.join(folder, f"{filename}_l1.svg"))
 
     # L2 Cache Hit Rate
     plt.figure()
-    plt.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    plt.plot(tile_sizes, l2_hit_rate, label="L2 Cache Hit %")
     plt.ylabel("Cache Hit Rate (%)")
-    plt.xlabel("Matrix Size")
+    plt.xlabel("Tile Size")
     plt.title("L2 Cache Usage - " + title)
     plt.legend()
     plt.savefig(os.path.join(folder, f"{filename}_l2.svg"))
 
     # Superposition L1 et L2
     plt.figure()
-    plt.plot(matrix_sizes, l1_usage, label="L1 Cache Hit %")
-    plt.plot(matrix_sizes, l2_hit_rate, label="L2 Cache Hit %")
+    plt.plot(tile_sizes, l1_usage, label="L1 Cache Hit %")
+    plt.plot(tile_sizes, l2_hit_rate, label="L2 Cache Hit %")
     plt.ylabel("Cache Hit Rate (%)")
-    plt.xlabel("Matrix Size")
+    plt.xlabel("Tile Size")
     plt.title("L1 & L2 Cache Usage - " + title)
     plt.legend()
     plt.savefig(os.path.join(folder, f"{filename}_l1l2.svg"))
@@ -138,12 +138,12 @@ def main(start_size, end_size, increment, tile_size=None, filename=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Matrix multiplication performance script.")
     
-    parser.add_argument("-s", "--start", type=int, required=True, help="Start matrix size.")
-    parser.add_argument("-e", "--end", type=int, required=True, help="End matrix size.")
-    parser.add_argument("-i", "--increment", type=int, required=True, help="Increment for matrix sizes.")
-    parser.add_argument("-t", "--tile", type=int, help="Tile size for tiled multiplication.")
+    parser.add_argument("-m", "--matrix", type=int, required=True, help="Fixed matrix size.")
+    parser.add_argument("-s", "--start", type=int, required=True, help="Start tile size.")
+    parser.add_argument("-e", "--end", type=int, required=True, help="End tile size.")
+    parser.add_argument("-i", "--increment", type=int, required=True, help="Increment for tile sizes.")
     parser.add_argument("-F", "--file", type=str, required=True, help="Base name for the saved files.")
 
     args = parser.parse_args()
 
-    main(args.start, args.end, args.increment, args.tile, args.file)
+    main(args.matrix, args.start, args.end, args.increment, args.file)
