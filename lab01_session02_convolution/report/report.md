@@ -193,8 +193,11 @@ g++ edge_detection_manualo2_unroll.o -o edge_detection_manualo2_unroll -lopencv_
 
 ## 9. Conclusion
 
+With the `-funroll-loops` option at `-O0`, we observe that the performance remains the same as the configuration without loop unrolling. This indicates that the compiler does not apply loop unrolling at the `-O0` optimization level.
 
+At `-O1` and `-O2`, we see that the performance of manually unrolled loops matches that of the compiler's loop unrolling. This suggests that the loop optimization performed by the compiler is equivalent to our manual implementation.
 
-## 10. Ref
+However, at `-O0`, we achieve significant performance gains by manually applying loop unrolling, as the compiler does not perform this optimization at that level.
 
-- ChatGPT was used to help develop the `perf.py` script
+Overall, loop unrolling proves to enhance the performance of our convolution implementation.
+
