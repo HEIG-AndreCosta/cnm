@@ -2,16 +2,17 @@
 #include <cstring>
 #include <ctime>
 
-#define N 10000 // Size of the matrices
 #define M 3 // Size of the filter
-#define P (N - M + 1) // Size of the output
+
+static int matrix_size;
+static int p;
 
 // Convolution function with data prefetching
 void convolution_with_prefetch(int *input, int *filter, int *output,
 			       int prefetch_offset)
 {
 	// Implement the convolution with prefetching
-	for (int i = 0; i < P; i++) {
+	for (int i = 0; i < p; i++) {
 		__builtin_prefetch(input + i + prefetch_offset);
 		int result = 0;
 		for (int j = 0; j < M; j++) {
@@ -24,7 +25,7 @@ void convolution_with_prefetch(int *input, int *filter, int *output,
 // Convolution function without prefetching
 void convolution_without_prefetch(int *input, int *filter, int *output)
 {
-	for (int i = 0; i < P; i++) {
+	for (int i = 0; i < p; i++) {
 		int result = 0;
 		for (int j = 0; j < M; j++) {
 			result += input[i + j] * filter[j];
@@ -35,23 +36,33 @@ void convolution_without_prefetch(int *input, int *filter, int *output)
 
 int main(int argc, char **argv)
 {
-	int input[N];
 	int filter[M];
-	int output[P];
 
-	if (argc < 2) {
-		printf("Usage: %s <prefetch_offset>", argv[0]);
+	if (argc < 3) {
+		printf("Usage: %s <matrix_size> <prefetch_offset>", argv[0]);
 		return 1;
 	}
-	int prefetch_offset = atoi(argv[1]);
+	matrix_size = atoi(argv[1]);
+	p = matrix_size - M + 1;
+
+	printf("Matrix Size: %d", matrix_size);
+	int prefetch_offset = atoi(argv[2]);
+
+	int *input = (int *)malloc(matrix_size * sizeof(int));
+	int *output = (int *)malloc(p * sizeof(int));
+	if (!input || !output) {
+		printf("Failed to allocate memory");
+		return 1;
+	}
+
 	// Initialize input and filter arrays (you can add code for initialization)
-	for (int i = 0; i < N; ++i) {
+	for (int i = 0; i < matrix_size; ++i) {
 		input[i] = i;
 	}
 	for (int i = 0; i < M; ++i) {
 		filter[i] = i;
 	}
-	memset((void *)output, 0, P * sizeof(*output));
+	memset((void *)output, 0, p * sizeof(*output));
 
 	// Measure time with prefetching
 	clock_t start = clock();
@@ -74,5 +85,7 @@ int main(int argc, char **argv)
 	std::cout << "Time without prefetch: " << time_without_prefetch
 		  << " seconds" << std::endl;
 
+	free(input);
+	free(output);
 	return 0;
 }
