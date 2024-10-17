@@ -42,7 +42,6 @@ Date : **16.10.2024**
   - [Compilation](#compilation)
   - [Results](#results)
 - [9. Conclusion](#9-conclusion)
-- [10. Ref](#10-ref)
 
 <!-- /code_chunk_output -->
 
