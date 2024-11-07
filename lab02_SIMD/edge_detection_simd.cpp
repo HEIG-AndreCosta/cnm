@@ -61,15 +61,23 @@ int main(int argc, char const *argv[])
 
 	for (int i = 1; i < image_rows - 1; ++i) {
 		for (int j = 1; j < image_cols - 1; ++j) {
-			gradient_y =
-				gradient_x = { A[i - 1][j - 1], A[i - 1][j],
-					       A[i - 1][j + 1], A[i][j - 1],
-					       A[i][j + 1],	A[i + 1][j - 1],
-					       A[i + 1][j],	A[i + 1][j + 1]
+			int16x8_t gradient_y = {
+				A[i - 1][j - 1], A[i - 1][j],
+				A[i - 1][j + 1], A[i][j - 1],
+				A[i][j + 1],	 A[i + 1][j - 1],
+				A[i + 1][j],	 A[i + 1][j + 1]
 
-				};
-			gradient_x = vmul_s16(gradient_x, sobel_x);
-			gradient_y = vmul_s16(gradient_y, sobel_y);
+			};
+
+			int16x8_t gradient_x = {
+				A[i - 1][j - 1], A[i - 1][j],
+				A[i - 1][j + 1], A[i][j - 1],
+				A[i][j + 1],	 A[i + 1][j - 1],
+				A[i + 1][j],	 A[i + 1][j + 1]
+
+			};
+			gradient_x = vmulq_s16(gradient_x, sobel_x);
+			gradient_y = vmulq_s16(gradient_y, sobel_y);
 			Gx[i][j] = vaddvq_s16(gradient_x);
 			Gy[i][j] = vaddvq_s16(gradient_y);
 		}
