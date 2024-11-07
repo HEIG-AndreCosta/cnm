@@ -59,44 +59,22 @@ int main(int argc, char const *argv[])
 
 	int16x8_t gradient_x, gradient_y;
 
-	// Implement the convolution algorithm using NEON intrinsics
+	for (int i = 1; i < image_rows - 1; ++i) {
+		for (int j = 1; j < image_cols - 1; ++j) {
+			gradient_y =
+				gradient_x = { A[i - 1][j - 1], A[i - 1][j],
+					       A[i - 1][j + 1], A[i][j - 1],
+					       A[i][j + 1],	A[i + 1][j - 1],
+					       A[i + 1][j],	A[i + 1][j + 1]
 
-	for (int y = 1; y < image_rows - 1; y++) {
-		for (int x = 1; x < image_cols - 1;
-		     x += 8) { // Process 8 pixels at a time
-
-			// Load rows for 3x3 neighborhood
-			int16x8_t top = vld1q_s16(
-				&src_data[(y - 1) * image_cols + (x - 1)]);
-			int16x8_t mid =
-				vld1q_s16(&src_data[y * image_cols + (x - 1)]);
-			int16x8_t bot = vld1q_s16(
-				&src_data[(y + 1) * image_cols + (x - 1)]);
-
-			int16x8_t grad_x_top =
-				vmlaq_s16(vmlaq_s16(vmulq_s16(top, kx_row1),
-						    mid, kx_row2),
-					  bot, kx_row3);
-			int16x8_t grad_x_bot =
-				vmlaq_s16(vmlaq_s16(vmulq_s16(bot, kx_row1),
-						    mid, kx_row2),
-					  top, kx_row3);
-			int16x8_t gx = vsubq_s16(grad_x_top, grad_x_bot);
-
-			int16x8_t grad_y_top =
-				vmlaq_s16(vmlaq_s16(vmulq_s16(top, ky_row1),
-						    mid, ky_row2),
-					  bot, ky_row3);
-			int16x8_t grad_y_bot =
-				vmlaq_s16(vmlaq_s16(vmulq_s16(bot, ky_row1),
-						    mid, ky_row2),
-					  top, ky_row3);
-			int16x8_t gy = vsubq_s16(grad_y_top, grad_y_bot);
-
-			vst1q_s16(&Gx[y * cols + x], gx);
-			vst1q_s16(&Gy[y * cols + x], gy);
+				};
+			gradient_x = vmul_s16(gradient_x, sobel_x);
+			gradient_y = vmul_s16(gradient_y, sobel_y);
+			Gx[i][j] = vaddvq_s16(gradient_x);
+			Gy[i][j] = vaddvq_s16(gradient_y);
 		}
 	}
+	// Implement the convolution algorithm using NEON intrinsics
 
 	/* **************************************************************************************** */
 
