@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
 
 	/* **************************************** CONVOLUTION ************************************** */
 
-	int16x8_t gradient_x, gradient_y;
+	auto start = std::chrono::high_resolution_clock::now();
 
 	for (int i = 1; i < image_rows - 1; ++i) {
 		for (int j = 1; j < image_cols - 1; ++j) {
@@ -82,7 +82,7 @@ int main(int argc, char const *argv[])
 			Gy[i][j] = vaddvq_s16(gradient_y);
 		}
 	}
-	// Implement the convolution algorithm using NEON intrinsics
+	auto end = std::chrono::high_resolution_clock::now();
 
 	/* **************************************************************************************** */
 
@@ -100,9 +100,11 @@ int main(int argc, char const *argv[])
 	}
 
 	// Calculate how long took convolution
-	// auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(
+		end - start);
 
-	// std::cout << image_rows << ", " << image_cols << ", " << duration.count() << std::endl;
+	std::cout << image_rows << ", " << image_cols << ", "
+		  << duration.count() << std::endl;
 
 	// Save gradients as images
 	imwrite(base_name + "_x.png",
