@@ -22,15 +22,10 @@ def main():
     for image in images:
         output_tab += f"|{image}|"
         for target in targets:
-            image_name = os.path.basename(image)
-            output_folder = os.path.join("output", image_name, target)
-            create_if_not_exists(output_folder)
-            output_path = os.path.join(output_folder, image_name)
             output = subprocess.check_output(
                 [
                     f"./{target}",
                     image,
-                    output_path,
                 ],
             ).decode()
 
