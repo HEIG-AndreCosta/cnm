@@ -20,7 +20,7 @@ def main():
     output_tab = "Image,Rows,Columns,Conv. Time\n"
 
     for image in images:
-        output_tab += f"|{image}|"
+        output_tab += f"{image},"
         for target in targets:
             output = subprocess.check_output(
                 [
