@@ -110,7 +110,7 @@ On remarque que l'implémentation SIMD est plus rapide que les implémentations 
 
 ## 3. Conclusion
 
-Dans ce laboratoire, nous avons implémenté la détection de contours en utilisant les instructions SIMD et NEON. Nous avons comparé les performances de calcul avec les laboratoires précédents et nous avons constaté que l'implémentation SIMD est plus rapide.
+Dans ce laboratoire, nous avons implémenté la détection de contours en utilisant les instructions SIMD et NEON. Nous avons comparé les performances de calcul avec les laboratoires précédents et nous avons constaté que l'implémentation SIMD est plus rapide. Ces résultats nous ont étonné car nous pensions pas gagner autant de temps. En effet, la plus grande perte de temps se situe au niveau des accès memoires. On se rend bien compte que le nombre d'instruction à un rôle prépondérant dans la performance d'un code.
 
 ## 4. Réf
 
