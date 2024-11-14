@@ -20,14 +20,71 @@ Answer: In order to compile our code using OpenMP we need to add the flag `-fope
 
 Explain the behaviour of the value of the variables during the execution when we declare them as
 
-private
-firstprivate
-shared
+**private** : Création d'une variable non initialisée qui shadow la variable portant le même nom dans le scope parent. Cela veut dire que les variable que l'on va afficher dans le block ont des valeurs indefinies et que les modifications faites ne modifient pas la variable du scope parent.
+
+exemple:
+
+```bash
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ ./priv_stage2 
+Thread 01 of 06 - Vars -544667396, 43690
+Thread 00 of 06 - Vars 1166445824, -1715367752
+Thread 04 of 06 - Vars -544667396, 43690
+Thread 05 of 06 - Vars -544667396, 43690
+Thread 02 of 06 - Vars -544667396, 43690
+Thread 03 of 06 - Vars -544667396, 43690
+Vars 1,2
+```
+
+**firstprivate** : Création d'une variable qui shadow la variable portant le même nom dans le scope parent et qui est initialisée avec la valeur de la variable du scope parent. Cela veut dire que les variable que l'on va afficher dans le block ont des valeurs définies et que les modifications faites ne modifient pas la variable du scope parent.
+
+exemple:
+
+```bash
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ ./firstpriv_stage2 
+Thread 04 of 06 - Vars 1, 2
+Thread 01 of 06 - Vars 1, 2
+Thread 05 of 06 - Vars 1, 2
+Thread 00 of 06 - Vars 1, 2
+Thread 02 of 06 - Vars 1, 2
+Thread 03 of 06 - Vars 1, 2
+Vars 1,2
+```
+
+**shared** : Utilisation de la variable du scope parent.
+Cela veut dire que les variable que l'on va afficher dans le block ont les mêmes valeurs que celles du scope parent et que les modifications faites modifient la variable du scope parent.
+
+exemple:
+
+```bash
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ ./shared_stage2
+Thread 01 of 06 - Vars 1, 2
+Thread 04 of 06 - Vars 2, 3
+Thread 02 of 06 - Vars 2, 3
+Thread 03 of 06 - Vars 3, 4
+Thread 05 of 06 - Vars 4, 5
+Thread 00 of 06 - Vars 5, 6
+Vars 6,7
+```
+
 
 ### Example 2
 
-How must the sequential implementation takes?
+How much the sequential implementation takes?
+```bash 
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ gcc -fopenmp -o s2p2 stage2_part2.c
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ ./s2p2_no_parallel 
+Sum  400000000 (0.49063s)
+```
+
+
 How much the parallel implementation with OpenMP takes?
+```bash
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ gcc -fopenmp -o s2p2 stage2_part2.c 
+cnm@cnm-desktop:~/cnm/lab03_session01_openMP$ ./s2p2 
+Sum  400000000 (0.08241s)
+```
+
+
 How have you implimented the parallel dot product with OpenMP?
 Does your parallel implementation produce the correct result?
 If it does, explain anything you had to consider.
