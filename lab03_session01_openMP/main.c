@@ -48,7 +48,6 @@ void kargmin(const double *distances, int dist_size, int *kmin, int k_size)
 	for (int k_idx = 0; k_idx < k_size; ++k_idx) {
 		double cur_min_distance = DBL_MAX;
 
-#pragma omp parallel for
 		for (int dist_idx = 0; dist_idx < dist_size; ++dist_idx) {
 			if (distances[dist_idx] < cur_min_distance &&
 			    distances[dist_idx] > pre_min_disntace) {
@@ -90,7 +89,6 @@ void predict(const WBCD *train, int train_size, const WBCD *test, int test_size,
 		label_b_count = 0;
 		label_m_count = 0;
 
-#pragma omp parallel for
 		for (int k_idx = 0; k_idx < k; ++k_idx) {
 			if (train[kNN[k_idx]].diagnosis == 'B') {
 				label_b_count = label_b_count + 1;
