@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+/* The extra [class] is a hack that increases specificity enough to
+   override a similar rule in reveal.js */
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  font-size: inherit;
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Laboratoire n°2</title>
+        <link rel="stylesheet" href="template.css">
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> -->
+        <!-- <script>hljs.highlightAll();</script> -->
+
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"></link> -->
+
+    </head>
+    <body>
+        <img class="logo" src="logo.png"/>
+        <div class="cover">
+            <div class="title">
+                <div class="h1 text-center">SIMD and NEON
+intrinsics</div>
+                <div class="h2 text-center">TIC</div>
+                <div class="h2 text-center">unité d’enseignement
+CNM</div>
+            </div>
+            <div class="cover-info">
+                <div class="title-info">
+                    <span>Auteurs: </span> <strong><span>Andrè Costa
+&amp; Alexandre Iorio</span></strong>
+                </div>
+                <div class="title-info">
+                    <span>Professeur: </span> <strong><span>Marina
+Zapater</span></strong>
+                </div>
+                <div class="title-info">
+                    <span>Assistant: </span> <strong><span>Mehdi
+Akeddar</span></strong>
+                </div>
+                <div class="title-info">
+                    <span>Salle de laboratoire </span> <strong><span>A09</span></strong>
+                </div>
+                <div class="title-info">
+                    <span>Date: </span> <strong><span>10.11.2024</span></strong>
+                </div>
+            </div>
+        </div>
+        <main>
+                        <div class="h2">Table des matières</div>
+            <ul>
+<li><a href="#introduction" id="toc-introduction">0.
+Introduction</a></li>
+<li><a href="#stage-2---détection-de-contours"
+id="toc-stage-2---détection-de-contours">1. Stage 2 - détection de
+contours</a></li>
+<li><a href="#analyse-des-performances"
+id="toc-analyse-des-performances">2. Analyse des performances</a></li>
+<li><a href="#conclusion" id="toc-conclusion">3. Conclusion</a></li>
+<li><a href="#réf" id="toc-réf">4. Réf</a></li>
+</ul>       
+            <div style="page-break-after:always;"></div>
+                        <h2 id="introduction">0. Introduction</h2>
+                        <p>Dans ce laboratoire, nous allons appliquer du
+                        calcul matriciel en utilisant les instructions
+                        SIMD et NEON. Nous allons comparer les
+                        performances de calcul avec les laboratoires
+                        précédents.</p>
+                        <h2 id="stage-2---détection-de-contours">1.
+                        Stage 2 - détection de contours</h2>
+                        <p>Dans cette partie, nous allons implémenter la
+                        détection de contours en utilisant les
+                        instructions SIMD et NEON et</p>
+                        <p>Afin de pouvoir utiliser les vecteurs de
+                        <code>int16x8_t</code> utilisé comme
+                        <code>kernel 3x3</code>, il faut admettre la
+                        valeur du centre du kernel à <code>0</code>.</p>
+                        <p>Le principe est que pour chaque itération du
+                        kernel, on va créer un nouveau vecteur de
+                        <code>int16x8_t</code> avec les valeurs de
+                        l’image où se trouve le kernel pour pouvoir les
+                        multiplier en une opération et les accumuler
+                        dans un tableau 2D de la taille de l’image.</p>
+                        <p>Les valeurs seront ensuite normalisées entre
+                        0 et 255 pour pouvoir les afficher en tant
+                        qu’image de nuances de gris.</p>
+                        <p>Voici le résultat de la détection de contours
+                        avec les instructions SIMD et NEON:</p>
+                        <table>
+                        <tr>
+                        <td>
+                        Originale
+                        </td>
+                        <td>
+                        Détection de bords horizontaux
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./bike.jpg" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./bike_y.png" style="width:100%">
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        Détection de bords verticaux
+                        </td>
+                        <td>
+                        Détection de contours
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./bike_x.png" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./bike_edges.png" style="width:100%">
+                        </td>
+                        </tr>
+                        </table>
+                        <table>
+                        <tr>
+                        <td>
+                        Originale
+                        </td>
+                        <td>
+                        Détection de bords horizontaux
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./coins.png" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./coins_y.png" style="width:100%">
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        Détection de bords verticaux
+                        </td>
+                        <td>
+                        Détection de contours
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./coins_x.png" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./coins_edges.png" style="width:100%">
+                        </td>
+                        </tr>
+                        </table>
+                        <div class="page-break">
+
+                        </div>
+                        <table>
+                        <tr>
+                        <td>
+                        Originale
+                        </td>
+                        <td>
+                        Détection de bords horizontaux
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./engine.png" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./engine_y.png" style="width:100%">
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        Détection de bords verticaux
+                        </td>
+                        <td>
+                        Détection de contours
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./engine_x.png" style="width:100%">
+                        </td>
+                        <td>
+                        <img src="./engine_edges.png" style="width:100%">
+                        </td>
+                        </tr>
+                        </table>
+                        <div class="page-break">
+
+                        </div>
+                        <h2 id="analyse-des-performances">2. Analyse des
+                        performances</h2>
+                        <p>Afin de comparer les performances de calcul
+                        entre les différentes implémentations des
+                        laboratoires précédents et l’implémentation
+                        SIMD.</p>
+                        <p>Voici les résultats obtenus:</p>
+                        <table style="width:85%">
+                        <tr>
+                        <td>
+                        <img src="./chart_bike.jpg.png" style="width:100%">
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <img src="./chart_coins.png.png" style="width:100%">
+                        </td>
+                        <tr>
+                        <td>
+                        <img src="./chart_engine.png.png" style="width:100%">
+                        </td>
+                        </tr>
+                        </table>
+                        <p>On remarque que l’implémentation SIMD est
+                        plus rapide que les implémentations
+                        précédentes.</p>
+                        <h2 id="conclusion">3. Conclusion</h2>
+                        <p>Dans ce laboratoire, nous avons implémenté la
+                        détection de contours en utilisant les
+                        instructions SIMD et NEON. Nous avons comparé
+                        les performances de calcul avec les laboratoires
+                        précédents et nous avons constaté que
+                        l’implémentation SIMD est plus rapide. Ces
+                        résultats nous ont étonné car nous pensions pas
+                        gagner autant de temps. En effet, la plus grande
+                        perte de temps se situe au niveau des accès
+                        memoires. On se rend bien compte que le nombre
+                        d’instruction à un rôle prépondérant dans la
+                        performance d’un code.</p>
+                        <h2 id="réf">4. Réf</h2>
+                        <ul>
+                        <li>ChatGPT pour la génération du script
+                        <code>chart.py</code></li>
+                        </ul>
+        </main>
+    </body>
+</html>

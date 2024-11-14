@@ -1,0 +1,5 @@
+Image,height, width,Naïve,Unrolling,SW Loop Unrolling (-O0),SW Loop Unrolling (-O1),SW Loop Unrolling (-O2),Compiler (-O0),Compiler (-O1),Compiler (-O2), SIMD
+bike.jpg,480,640,34598.0,24077.0,24077.0,4992.0,4897.0,34537.0,5013.0,4924.0,2839.0
+coins.png,246,300,8258.0,5754.0,5754.0,1182.0,1190.0,8244.0,1219.0,1173.0,666.0
+engine.png,480,640,34658.0,24229.0,24229.0,5011.0,4950.0,35036.0,5062.0,4979.0,2861.0
+
