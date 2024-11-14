@@ -44,7 +44,6 @@ void kargmin(const double *distances, int dist_size, int *kmin, int k_size)
 {
 	double pre_min_disntace = 0;
 
-#pragma omp parallel for
 	for (int k_idx = 0; k_idx < k_size; ++k_idx) {
 		double cur_min_distance = DBL_MAX;
 
@@ -78,7 +77,6 @@ void predict(const WBCD *train, int train_size, const WBCD *test, int test_size,
 
 	int label_b_count, label_m_count;
 
-#pragma omp parallel for
 	for (int test_idx = 0; test_idx < test_size; ++test_idx) {
 		// Calculate distances
 		calc_distance(train, &test[test_idx], train_size, distances);
