@@ -4,7 +4,7 @@ HEADER	= wdbc.h
 OUT	= knn
 CC	 = gcc
 FLAGS	 = -g -c -Wall -fopenmp
-LFLAGS	 = -lm 
+LFLAGS	 = -lm -fopenmp
 
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
