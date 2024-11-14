@@ -17,7 +17,7 @@ int main(void)
 	sum = 0;
 	start = omp_get_wtime();
 
-#pragma omp parallel for
+#pragma omp parallel for reduction(+ : sum)
 	for (i = 0; i < SIZE; i++) {
 		sum += vec_a[i] * vec_b[i];
 	}
