@@ -6,7 +6,15 @@ Follow the steps of the laboratory and complete the information
 
 What version of OpenMP is implmented in the GNU Compiler Collection available in our boards?
 
+Answer: In order to check for the openmp version we can run the following command.
+        Source: https://stackoverflow.com/a/13612520
+```bash
+        echo |cpp -fopenmp -dM |grep -i open
+```
+
 What do we need to do to enable OpenMP?
+
+Answer: In order to compile our code using OpenMP we need to add the flag `-fopenmp` 
 
 ### Example 1
 
