@@ -5,7 +5,7 @@ TARGET = neural_network
 
 all: $(TARGET)
 
-$(TARGET): main_answers.c
+$(TARGET): main.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
