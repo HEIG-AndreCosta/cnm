@@ -99,9 +99,6 @@ int main()
  */
 void initialize_network(NeuralNetwork *network)
 {
-	// TODO: Implement the initialization of weights with small random values.
-	// You need to set random values for network->weights_ih and network->weights_ho.
-
 	for (int i = 0; i < INPUT_SIZE; ++i) {
 		for (int j = 0; j < HIDDEN_SIZE; ++j) {
 			network->weights_ih[i][j] =
@@ -130,17 +127,19 @@ double sigmoid(double input)
  */
 void forward_pass(NeuralNetwork *network)
 {
-	// TODO: Implement the forward pass, including applying the sigmoid activation function.
-	// The results should be stored in network->hidden and network->output.
+#pragma omp for nowait
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
 		int sum = 0;
+#pragma omp for reduction(+ : sum)
 		for (int j = 0; j < INPUT_SIZE; ++j) {
 			sum += network->input[j] * network->weights_ih[j][i];
 		}
 		network->hidden[i] = sigmoid(sum);
 	}
+#pragma omp for nowait
 	for (int i = 0; i < OUTPUT_SIZE; ++i) {
 		int sum = 0;
+#pragma omp for reduction(+ : sum)
 		for (int j = 0; j < HIDDEN_SIZE; ++j) {
 			sum += network->hidden[j] * network->weights_ho[j][i];
 		}
@@ -159,16 +158,19 @@ void backpropagation(NeuralNetwork *network, double target[OUTPUT_SIZE])
 	double *output_gradients =
 		calloc(OUTPUT_SIZE, sizeof(output_gradients));
 	assert(output_gradients);
+#pragma omp for
 	for (int i = 0; i < OUTPUT_SIZE; ++i) {
 		output_gradients[i] = (target[i] - network->output[i]) *
 				      network->output[i] *
 				      (1 - network->output[i]);
+#pragma omp for
 		for (int j = 0; j < HIDDEN_SIZE; ++j) {
 			network->weights_ho[j][i] += LEARNING_RATE *
 						     output_gradients[i] *
 						     network->hidden[j];
 		}
 	}
+#pragma omp for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
 		network->hidden[i] = 0;
 		for (int j = 0; j < OUTPUT_SIZE; ++j) {
@@ -179,7 +181,9 @@ void backpropagation(NeuralNetwork *network, double target[OUTPUT_SIZE])
 		}
 	}
 
+#pragma omp for
 	for (int i = 0; i < INPUT_SIZE; ++i) {
+#pragma omp for
 		for (int j = 0; j < HIDDEN_SIZE; ++j) {
 			network->weights_ih[i][j] += LEARNING_RATE *
 						     network->hidden[j] *
