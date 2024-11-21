@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <math.h>
+#include <omp.h>
 #include <time.h>
 
 #define INPUT_SIZE    784
@@ -67,10 +68,12 @@ int main()
 			double input_data[INPUT_SIZE];
 			double target[OUTPUT_SIZE];
 
+#pragma omp for nowait
 			for (int i = 0; i < INPUT_SIZE; ++i) {
 				input_data[i] = training_data[sample][i];
 			}
 
+#pragma omp for
 			for (int i = 0; i < OUTPUT_SIZE; ++i) {
 				target[i] = training_labels[sample][i];
 			}
