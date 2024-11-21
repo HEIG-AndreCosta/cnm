@@ -68,14 +68,17 @@ int main()
 			double input_data[INPUT_SIZE];
 			double target[OUTPUT_SIZE];
 
-#pragma omp parallel for nowait
-			for (int i = 0; i < INPUT_SIZE; ++i) {
-				input_data[i] = training_data[sample][i];
-			}
-
-#pragma omp parallel for
-			for (int i = 0; i < OUTPUT_SIZE; ++i) {
-				target[i] = training_labels[sample][i];
+#pragma omp parallel
+			{
+#pragma omp for nowait
+				for (int i = 0; i < INPUT_SIZE; ++i) {
+					input_data[i] =
+						training_data[sample][i];
+				}
+#pragma omp for nowait
+				for (int i = 0; i < OUTPUT_SIZE; ++i) {
+					target[i] = training_labels[sample][i];
+				}
 			}
 			// Forward pass
 			forward_pass(&network);
@@ -127,7 +130,7 @@ double sigmoid(double input)
  */
 void forward_pass(NeuralNetwork *network)
 {
-#pragma omp parallel for nowait
+#pragma omp parallel for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
 		int sum = 0;
 #pragma omp parallel for reduction(+ : sum)
@@ -136,7 +139,8 @@ void forward_pass(NeuralNetwork *network)
 		}
 		network->hidden[i] = sigmoid(sum);
 	}
-#pragma omp parallel for nowait
+
+#pragma omp parallel for
 	for (int i = 0; i < OUTPUT_SIZE; ++i) {
 		int sum = 0;
 #pragma omp parallel for reduction(+ : sum)
@@ -173,6 +177,7 @@ void backpropagation(NeuralNetwork *network, double target[OUTPUT_SIZE])
 #pragma omp parallel for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
 		network->hidden[i] = 0;
+#pragma omp parallel for
 		for (int j = 0; j < OUTPUT_SIZE; ++j) {
 			network->hidden[i] += output_gradients[j] *
 					      network->weights_ho[i][j] *
