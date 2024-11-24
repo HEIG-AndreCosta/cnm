@@ -115,11 +115,13 @@ Questions:
 - kargmin n'a pas pus être optimisé. En effet, paralelliser la boucle exterieur n'a aucune utilité, la boucle interieur peut être paralellisée avec reduction(min:cur_min_distance) mais on a un soucis sur l'assigantion de dist_idx. Il nous faudrait une sorte de if qui check quel thread à trouvé la valeur minimum et assigne dist_idx en conséquence.
 
 * Is it faster than the naive implementation? (explain why or why not)
+- Oui, on atteint 1/3 du temps d'exécution de la version naive. 0.031840s contre 0.095306s. 
+
+
 
 ### Multiple threaded confusion matrix
 
-
-|    | Be | Ma |
-|----|----|----|
-| Be |    |    |
-| Ma |    |    |
+|   |  Be |  Ma |
+|---|-----|-----|
+|Be | 122 |   8 |
+|Ma |   3 |  36 |
