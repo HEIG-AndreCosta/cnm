@@ -26,6 +26,7 @@
 void calc_distance(const WBCD *data, const WBCD *a, const int data_size,
 		   double *distances)
 {
+#pragma omp parallel for
 	for (int i = 0; i < data_size; i++) {
 		distances[i] = ecludian_distance(&data[i], a);
 	}
