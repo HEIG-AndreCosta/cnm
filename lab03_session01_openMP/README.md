@@ -9,7 +9,10 @@ What version of OpenMP is implmented in the GNU Compiler Collection available in
 Answer: In order to check for the openmp version we can run the following command.
         Source: https://stackoverflow.com/a/13612520
 ```bash
-        echo |cpp -fopenmp -dM |grep -i open
+      
+cnm@cnm-desktop:~$ echo |cpp -fopenmp -dM |grep -i open
+#define _OPENMP 201511
+
 ```
 
 What do we need to do to enable OpenMP?
@@ -20,7 +23,9 @@ Answer: In order to compile our code using OpenMP we need to add the flag `-fope
 
 Explain the behaviour of the value of the variables during the execution when we declare them as
 
-**private** : Création d'une variable non initialisée qui shadow la variable portant le même nom dans le scope parent. Cela veut dire que les variable que l'on va afficher dans le block ont des valeurs indefinies et que les modifications faites ne modifient pas la variable du scope parent.
+**private** : Création d'une variable non initialisée qui shadow la variable portant le même nom 
+dans le scope parent. Cela veut dire que les variable que l'on va afficher dans le block ont des 
+valeurs indefinies et que les modifications faites ne modifient pas la variable du scope parent.
 
 exemple:
 
@@ -35,7 +40,9 @@ Thread 03 of 06 - Vars -544667396, 43690
 Vars 1,2
 ```
 
-**firstprivate** : Création d'une variable qui shadow la variable portant le même nom dans le scope parent et qui est initialisée avec la valeur de la variable du scope parent. Cela veut dire que les variable que l'on va afficher dans le block ont des valeurs définies et que les modifications faites ne modifient pas la variable du scope parent.
+**firstprivate** : Création d'une variable qui shadow la variable portant le même nom dans le scope parent
+et qui est initialisée avec la valeur de la variable du scope parent. Cela veut dire que les variable que l'on
+va afficher dans le block ont des valeurs définies et que les modifications faites ne modifient pas la variable du scope parent.
 
 exemple:
 
@@ -51,7 +58,8 @@ Vars 1,2
 ```
 
 **shared** : Utilisation de la variable du scope parent.
-Cela veut dire que les variable que l'on va afficher dans le block ont les mêmes valeurs que celles du scope parent et que les modifications faites modifient la variable du scope parent.
+Cela veut dire que les variable que l'on va afficher dans le block ont les mêmes valeurs 
+que celles du scope parent et que les modifications faites modifient la variable du scope parent.
 
 exemple:
 
