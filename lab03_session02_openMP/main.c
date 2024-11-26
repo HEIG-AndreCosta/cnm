@@ -58,8 +58,7 @@ int main() {
             double target[OUTPUT_SIZE];
 
             for (int i = 0; i < INPUT_SIZE; ++i) {
-                input_data[i] = training_data[sample][i];
-
+                network.input[i] = training_data[sample][i];
             }
             
             for (int i = 0; i < OUTPUT_SIZE; ++i) {
