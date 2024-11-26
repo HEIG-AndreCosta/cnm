@@ -94,8 +94,25 @@ Sum  400000000 (0.08241s)
 
 
 How have you implimented the parallel dot product with OpenMP?
+Answer: Le produit scalaire parallèle a été implémenté en utilisant OpenMP de la manière suivante :
+
+En utilisant la directive `#pragma omp parallel for reduction(+:sum)` pour diviser les itérations de la boucle entre plusieurs threads afin accumule sur la variable `sum`, il nous a fallut utiliser la clause `reduction(+:sum)`, qui permet à chaque thread de calculer une somme de manière indépendante, puis combinera le tout dans un résultat final. Nous avons du compiler le programme avec l'option `-fopenmp` pour activer OpenMP. 
+
+Voici le code de la boucle parallèle :
+
+```c
+#pragma omp parallel for reduction(+ : sum)
+	for (i = 0; i < SIZE; i++) {
+		sum += vec_a[i] * vec_b[i];
+	}
+```
+
 Does your parallel implementation produce the correct result?
+Answer: Oui, le résultat est correct. Nous avons comparé le processus séquentiel avec le processus parallèle et les résultats sont les mêmes.
+
 If it does, explain anything you had to consider.
+Comme  mentionné précédemment, pour garantir la correction et des performances optimales, plusieurs points ont été pris en compte : l’utilisation de la clause reduction(+:sum) pour assurer la sécurité des threads, une distribution équilibrée des itérations entre les threads par OpenMP, l'initialisation préalable des vecteurs vec_a et vec_b.
+
 If it does not, explain why.
 
 ## Stage 3 Naive implementation matrix
