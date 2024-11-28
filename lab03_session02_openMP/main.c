@@ -176,14 +176,14 @@ void backpropagation(NeuralNetwork *network, double target[OUTPUT_SIZE])
 	}
 #pragma omp parallel for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
+		int sum = 0;
 		network->hidden[i] = 0;
-#pragma omp parallel for reduction(+ : network->hidden[i])
+#pragma omp parallel for reduction(+ : sum)
 		for (int j = 0; j < OUTPUT_SIZE; ++j) {
-			network->hidden[i] += output_gradients[j] *
-					      network->weights_ho[i][j] *
-					      network->hidden[i] *
-					      (1 - network->hidden[i]);
+			sum += output_gradients[j] * network->weights_ho[i][j] *
+			       network->hidden[i] * (1 - network->hidden[i]);
 		}
+		network->hidden[i] = sum;
 	}
 
 #pragma omp parallel for
