@@ -26,7 +26,7 @@ def main():
             ).decode()
 
             time = output.strip().split(" ")[-1][:-1]
-            time = int(time)
+            time = float(time)
             output_tab += f"{nb_thread}, {bind}, core, {time}\n"
 
     print(output_tab)
