@@ -10,7 +10,7 @@ def main():
 
     threads = [1, 2, 3, 4, 5, 6]
     threads.extend(range(10, 110, 10))
-    proc_binds = ["false, true, close, spread, master"]
+    proc_binds = ["false", "true", "close", "spread", "master"]
     for nb_thread in threads:
         for bind in proc_binds:
             env = os.environ.copy()
