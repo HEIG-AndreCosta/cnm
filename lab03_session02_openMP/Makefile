@@ -9,7 +9,7 @@ all: $(TARGET) $(NO_OPTI_TARGET)
 $(TARGET): main.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(NO_OPTI_TARGET): main_noopti.c
+$(NO_OPTI_TARGET): main-noopti.c
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 clean:
