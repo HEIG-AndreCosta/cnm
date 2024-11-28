@@ -1,22 +1,33 @@
 import subprocess
 
+import os
+from pprint import pprint
+
 
 def main():
 
-    output_tab = "num_threads, time(s)\n"
+    output_tab = "num_threads, omp_proc_bind, omp_places, time(s)\n"
 
     threads = [1, 2, 3, 4, 5, 6]
     threads.extend(range(10, 110, 10))
+    proc_binds = ["false, true, close, spread, master"]
     for nb_thread in threads:
-        output = subprocess.check_output(
-            [
-                f"OMP_NUM_THREADS={nb_thread} ./neural_network",
-            ],
-        ).decode()
+        for bind in proc_binds:
+            env = os.environ.copy()
+            env["OMP_NUM_THREADS"] = str(nb_thread)
+            env["OMP_PROC_BIND"] = bind
+            env["OMP_PLACES"] = "core"
+            pprint(env)
+            output = subprocess.check_output(
+                [
+                    "./neural_network",
+                ],
+                env=env,
+            ).decode()
 
-        time = output.strip().split(" ")[-1][:-1]
-        time = int(time)
-        output_tab += f"{nb_thread},{time}\n"
+            time = output.strip().split(" ")[-1][:-1]
+            time = int(time)
+            output_tab += f"{nb_thread}, {bind}, core, {time}\n"
 
     print(output_tab)
 
