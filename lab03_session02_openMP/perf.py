@@ -10,8 +10,7 @@ def main():
     for nb_thread in threads:
         output = subprocess.check_output(
             [
-                f"OMP_NUM_THREADS={nb_thread}",
-                "./neural_network",
+                f"OMP_NUM_THREADS={nb_thread} ./neural_network",
             ],
         ).decode()
 
