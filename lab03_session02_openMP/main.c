@@ -3,6 +3,10 @@
 #include <math.h>
 #include <omp.h>
 
+
+#define TEST_INPUT_SIZE 4
+#define TEST_HIDDEN_SIZE 3
+#define TEST_OUTPUT_SIZE 2
 #define INPUT_SIZE 784
 #define HIDDEN_SIZE 128
 #define OUTPUT_SIZE 10
@@ -24,6 +28,72 @@ void initialize_network(NeuralNetwork* network);
 void forward_pass(NeuralNetwork* network);
 void backpropagation(NeuralNetwork* network, double target[OUTPUT_SIZE]);
 
+void test_network() {
+    NeuralNetwork network;
+
+    // Fixed input and weights
+    double test_input[TEST_INPUT_SIZE] = {1.0, 0.5, -0.5, 0.0};
+    double test_target[TEST_OUTPUT_SIZE] = {0.0, 1.0};
+
+    double test_weights_ih[TEST_INPUT_SIZE][TEST_HIDDEN_SIZE] = {
+        {0.1, -0.2, 0.3},
+        {0.4, 0.5, -0.6},
+        {-0.7, 0.8, -0.9},
+        {0.1, -0.4, 0.6}
+    };
+
+    double test_weights_ho[TEST_HIDDEN_SIZE][TEST_OUTPUT_SIZE] = {
+        {0.2, -0.3},
+        {0.4, 0.5},
+        {-0.5, 0.7}
+    };
+
+    // Initialize the network
+    for (int i = 0; i < TEST_INPUT_SIZE; ++i) {
+        network.input[i] = test_input[i];
+    }
+
+    for (int i = 0; i < TEST_INPUT_SIZE; ++i) {
+        for (int j = 0; j < TEST_HIDDEN_SIZE; ++j) {
+            network.weights_ih[i][j] = test_weights_ih[i][j];
+        }
+    }
+
+    for (int j = 0; j < TEST_HIDDEN_SIZE; ++j) {
+        for (int k = 0; k < TEST_OUTPUT_SIZE; ++k) {
+            network.weights_ho[j][k] = test_weights_ho[j][k];
+        }
+    }
+
+    // Perform forward pass
+    forward_pass(&network);
+
+    // Print results of forward pass
+    printf("Forward pass output:\n");
+    for (int k = 0; k < TEST_OUTPUT_SIZE; ++k) {
+        printf("Output[%d]: %.6f\n", k, network.output[k]);
+    }
+
+    // Perform backpropagation
+    backpropagation(&network, test_target);
+
+    // Print updated weights
+    printf("\nUpdated weights (input to hidden):\n");
+    for (int i = 0; i < TEST_INPUT_SIZE; ++i) {
+        for (int j = 0; j < TEST_HIDDEN_SIZE; ++j) {
+            printf("%.6f ", network.weights_ih[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nUpdated weights (hidden to output):\n");
+    for (int j = 0; j < TEST_HIDDEN_SIZE; ++j) {
+        for (int k = 0; k < TEST_OUTPUT_SIZE; ++k) {
+            printf("%.6f ", network.weights_ho[j][k]);
+        }
+        printf("\n");
+    }
+}
 
 void generate_dummy_data(double training_data[NUM_SAMPLES][INPUT_SIZE], double training_labels[NUM_SAMPLES][OUTPUT_SIZE]) {
     for (int i = 0; i < NUM_SAMPLES; ++i) {
