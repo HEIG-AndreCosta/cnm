@@ -118,8 +118,12 @@ void generate_dummy_data(double training_data[NUM_SAMPLES][INPUT_SIZE],
 	}
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	if (argc == 2) {
+		test_network();
+		return 0;
+	}
 	NeuralNetwork network;
 	initialize_network(&network);
 
