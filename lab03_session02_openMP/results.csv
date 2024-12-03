@@ -1,4 +1,4 @@
-num_threads, omp_proc_bind, omp_places, time(s)
+num_threads,omp_proc_bind,omp_places,time(s)
 1, false, cores, 0.139184
 1, true, cores, 0.138739
 1, close, cores, 0.138418
