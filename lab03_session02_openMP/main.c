@@ -207,7 +207,7 @@ void forward_pass(NeuralNetwork *network)
 {
 #pragma omp parallel for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
-		int sum = 0;
+		double sum = 0;
 #pragma omp parallel for reduction(+ : sum)
 		for (int j = 0; j < INPUT_SIZE; ++j) {
 			sum += network->input[j] * network->weights_ih[j][i];
@@ -217,7 +217,7 @@ void forward_pass(NeuralNetwork *network)
 
 #pragma omp parallel for
 	for (int i = 0; i < OUTPUT_SIZE; ++i) {
-		int sum = 0;
+		double sum = 0;
 #pragma omp parallel for reduction(+ : sum)
 		for (int j = 0; j < HIDDEN_SIZE; ++j) {
 			sum += network->hidden[j] * network->weights_ho[j][i];
@@ -251,7 +251,7 @@ void backpropagation(NeuralNetwork *network, double target[OUTPUT_SIZE])
 	}
 #pragma omp parallel for
 	for (int i = 0; i < HIDDEN_SIZE; ++i) {
-		int sum = 0;
+		double sum = 0;
 		network->hidden[i] = 0;
 #pragma omp parallel for reduction(+ : sum)
 		for (int j = 0; j < OUTPUT_SIZE; ++j) {
