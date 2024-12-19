@@ -2,9 +2,14 @@
 // For the CUDA runtime routines (prefixed with "cuda_")
 #include <cuda_runtime.h>
 
-//TODO: CUDA kernel that prints threads ids, block size, blocks ids and grid size
+__global__ void print_variables(void)
+{
+	printf("Thread %d/%d in %d/%d", threadIdx.x, blockDim.x, blockIdx.x,
+	       gridDim.x);
+}
 
 int main(int argc, char const *argv[])
 {
-    return 0;
+	print_variables<<<32, 32> > >();
+	return 0;
 }
