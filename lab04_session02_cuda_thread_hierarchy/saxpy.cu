@@ -108,7 +108,8 @@ int main(int argc, char const *argv[])
 	const size_t block_size = 256;
 	const size_t num_blocks = (n + block_size - 1) / block_size;
 
-	scalar_multiplication(n, a, d_x, d_y, d_z);
+	scalar_multiplication<<<num_blocks, block_size> > >(n, a, d_x, d_y,
+							    d_z);
 
 	//TODO: Copy memory from device to host and check for errors
 
