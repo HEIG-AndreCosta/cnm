@@ -164,7 +164,7 @@ int main(int argc, char const *argv[])
 	const size_t block_size = 256;
 	const size_t num_blocks = ((m * n) + block_size - 1) / block_size;
 
-	gemm<<<num_blocks, block_size> > >(d_a, d_b, d_c, m, n, p);
+	gemm<<<num_blocks, block_size>>>(d_a, d_b, d_c, m, n, p);
 
 	//TODO: Copy memory from device to host and check for errors
 
