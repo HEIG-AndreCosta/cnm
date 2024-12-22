@@ -168,7 +168,7 @@ int main(int argc, char const *argv[])
 
 	//TODO: Copy memory from device to host and check for errors
 
-	error = cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
+	error = cudaMemcpy(h_c, d_c, size_c, cudaMemcpyDeviceToHost);
 	if (error != cudaSuccess) {
 		cudaFree(d_a);
 		cudaFree(d_b);
@@ -178,11 +178,11 @@ int main(int argc, char const *argv[])
 
 	//TODO: Free memory from device to host and check for errors
 
-	error = cudaFree(d_x);
+	error = cudaFree(d_a);
 	if (error != cudaSuccess) {
 		printf("Couldn't free dx\n");
 	}
-	error = cudaFree(d_y);
+	error = cudaFree(d_b);
 	if (error != cudaSuccess) {
 		printf("Couldn't free dy\n");
 	}
