@@ -10,6 +10,6 @@ __global__ void print_variables(void)
 
 int main(int argc, char const *argv[])
 {
-	print_variables<<<32, 32> > >();
+	print_variables<<<32, 32>>>();
 	return 0;
 }
