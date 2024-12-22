@@ -168,7 +168,7 @@ int main(int argc, char const *argv[])
 
 	//TODO: Copy memory from device to host and check for errors
 
-	error = cudaMemcpy(h_z, d_z, size, cudaMemcpyDeviceToHost);
+	error = cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
 	if (error != cudaSuccess) {
 		cudaFree(d_x);
 		cudaFree(d_y);
