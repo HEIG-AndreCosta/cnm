@@ -4,8 +4,8 @@
 
 __global__ void print_variables(void)
 {
-	cuprintf("Thread %d/%d in %d/%d\n", threadIdx.x, blockDim.x, blockIdx.x,
-		 gridDim.x);
+	printf("Thread %d/%d in %d/%d\n", threadIdx.x, blockDim.x, blockIdx.x,
+	       gridDim.x);
 }
 
 int main(int argc, char const *argv[])
