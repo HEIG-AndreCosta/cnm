@@ -170,9 +170,9 @@ int main(int argc, char const *argv[])
 
 	error = cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);
 	if (error != cudaSuccess) {
-		cudaFree(d_x);
-		cudaFree(d_y);
-		cudaFree(d_z);
+		cudaFree(d_a);
+		cudaFree(d_b);
+		cudaFree(d_c);
 		return 1;
 	}
 
@@ -186,7 +186,7 @@ int main(int argc, char const *argv[])
 	if (error != cudaSuccess) {
 		printf("Couldn't free dy\n");
 	}
-	error = cudaFree(d_z);
+	error = cudaFree(d_c);
 	if (error != cudaSuccess) {
 		printf("Couldn't free dz\n");
 	}
