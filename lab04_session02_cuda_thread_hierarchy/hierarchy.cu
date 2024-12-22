@@ -5,11 +5,12 @@
 __global__ void print_variables(void)
 {
 	cuprintf("Thread %d/%d in %d/%d\n", threadIdx.x, blockDim.x, blockIdx.x,
-	       gridDim.x);
+		 gridDim.x);
 }
 
 int main(int argc, char const *argv[])
 {
 	print_variables<<<32, 32>>>();
+	cudaDeviceSynchronize();
 	return 0;
 }
