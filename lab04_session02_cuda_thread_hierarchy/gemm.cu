@@ -13,11 +13,14 @@
 __global__ void gemm(float const *a, float const *b, float *c, size_t m,
 		     size_t n, size_t p)
 {
-	size_t thread_id = blockIdx.x * blockDim.x + threadIdx.x;
-	size_t row = thread_id / p;
-	size_t col = thread_id % p;
+	//1D version
+	//size_t thread_id = blockIdx.x * blockDim.x + threadIdx.x;
+	//size_t row = thread_id / p;
+	//size_t col = thread_id % p;
 
-	if (row < m) {
+	size_t row = blockIdx.y * blockDim.y + threadIdx.y;
+	size_t col = blockIdx.x * blockDim.x + threadIdx.x;
+	if (row < m && col < p) {
 		float acc_sum = 0;
 		for (size_t k = 0; k < n; ++k) {
 			acc_sum += a[row * n + k] * b[k * p + col];
@@ -169,11 +172,20 @@ int main(int argc, char const *argv[])
 	}
 	//TODO: Call kernel and check for errors
 
-	const size_t block_size = 256;
-	const size_t num_blocks = ((m * p) + block_size - 1) / block_size;
+	// 1D version
+	//const size_t block_size = 256;
+	//const size_t num_blocks = ((m * p) + block_size - 1) / block_size;
 
+	//cpu_start = std::chrono::high_resolution_clock::now();
+	//gemm<<<num_blocks, block_size> > >(d_a, d_b, d_c, m, n, p);
+	//cpu_stop = std::chrono::high_resolution_clock::now();
+
+	// 2D version
+	dim3 blockDim(16, 16); // Block size of 16x16 threads
+	dim3 gridDim((p + blockDim.x - 1) / blockDim.x,
+		     (m + blockDim.y - 1) / blockDim.y);
 	cpu_start = std::chrono::high_resolution_clock::now();
-	gemm<<<num_blocks, block_size>>>(d_a, d_b, d_c, m, n, p);
+	gemm<<<gridDim, blockDim>>>(d_a, d_b, d_c, m, n, p);
 	cpu_stop = std::chrono::high_resolution_clock::now();
 
 	//TODO: Copy memory from device to host and check for errors
