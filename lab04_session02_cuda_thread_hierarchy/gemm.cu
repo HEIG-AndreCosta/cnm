@@ -42,14 +42,12 @@ void gemm_cpu(float const *a, float const *b, float *c, size_t m, size_t n,
 	}
 }
 
-void print_matrix(float const* a, size_t m, size_t n){
-
-	for (size_t i = 0; i < m; ++i){
-		for (size_t j = 0; j < n; ++i){
-			printf("%g ", a[i * n + j]);
-		}
-		printf("\n");
+void print_matrix(float const *a, size_t n)
+{
+	for (size_t i = 0; i < n; ++i) {
+		printf("%g ", a[i]);
 	}
+	printf("\n");
 }
 // Check gemm result
 bool check_gemm(float const *a, float const *b, float const *c, size_t m,
