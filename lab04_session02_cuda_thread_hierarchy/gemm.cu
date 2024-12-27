@@ -17,7 +17,6 @@ __global__ void gemm(float const *a, float const *b, float *c, size_t m,
 	size_t row = thread_id / p;
 	size_t col = thread_id % p;
 
-	printf("Row %zu Col %zu\n", row, col);
 	if (row < m) {
 		float acc_sum = 0;
 		for (size_t k = 0; k < n; ++k) {
