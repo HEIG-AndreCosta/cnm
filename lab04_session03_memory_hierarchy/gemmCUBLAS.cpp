@@ -201,6 +201,18 @@ int main(int argc, char **argv)
 	// Read CUBLAS result
 	checkCublasErrors(
 		cublasGetVector(M * P, sizeof(float), d_C, 1, h_C, 1));
+	for (size_t i = 0; i < M; ++i) {
+		for (size_t j = 0; j < P; ++j) {
+			printf("%f ", h_C[i * P + j]);
+		}
+		printf("\n");
+	}
+	for (size_t i = 0; i < M; ++i) {
+		for (size_t j = 0; j < P; ++j) {
+			printf("%f ", h_C_ref[i * P + j]);
+		}
+		printf("\n");
+	}
 
 	bool result_check = check_sgemm_results(h_C, h_C_ref, M * P);
 
