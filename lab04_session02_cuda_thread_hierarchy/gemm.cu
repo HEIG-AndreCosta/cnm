@@ -13,8 +13,8 @@
 __global__ void gemm(float const *a, float const *b, float *c, size_t m,
 		     size_t n, size_t p)
 {
-	size_t col = blockDim.x * blockIdx.x + threadIdx.x;
-	size_t row = blockDim.y * blockIdx.y + threadIdx.y;
+	size_t row = blockDim.x * blockIdx.x + threadIdx.x;
+	size_t col = blockDim.y * blockIdx.y + threadIdx.y;
 
 	if (row < m && col < p) {
 		float acc_sum = 0;
