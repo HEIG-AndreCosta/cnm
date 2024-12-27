@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 			cublasSetVector(M * P, sizeof(float), h_C, 1, d_C, 1));
 
 		// Warmup operation with cublas
-		checkCublasErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N,
+		checkCublasErrors(cublasSgemm(handle, CUBLAS_OP_T, CUBLAS_OP_T,
 					      M, P, N, &alpha, d_A, M, d_B, N,
 					      &beta, d_C, M));
 
@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 
 		for (auto j = 0; j < num_iterations; j++) {
 			checkCublasErrors(cublasSgemm(
-				handle, CUBLAS_OP_N, CUBLAS_OP_N, M, P, N,
+				handle, CUBLAS_OP_T, CUBLAS_OP_T, M, P, N,
 				&alpha, d_A, M, d_B, N, &beta, d_C, M));
 		}
 
