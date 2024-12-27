@@ -42,6 +42,15 @@ void gemm_cpu(float const *a, float const *b, float *c, size_t m, size_t n,
 	}
 }
 
+void print_matrix(float const* a, size_t m, size_t n){
+
+	for (size_t i = 0; i < m; ++i){
+		for (size_t j = 0; j < n; ++i){
+			printf("%g ", a[i * n + j]);
+		}
+		printf("\n");
+	}
+}
 // Check gemm result
 bool check_gemm(float const *a, float const *b, float const *c, size_t m,
 		size_t n, size_t p)
@@ -105,6 +114,8 @@ int main(int argc, char const *argv[])
 	// Check SAXPY CPU results
 	printf("Checking CPU GEMM: %s\n",
 	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
+
+	print_matrix(h_c, m, p);
 
 	// Clean up result
 	for (size_t i = 0; i < m * p; ++i) {
@@ -175,6 +186,7 @@ int main(int argc, char const *argv[])
 		cudaFree(d_c);
 		return 1;
 	}
+	print_matrix(h_c, m, p);
 
 	//TODO: Free memory from device to host and check for errors
 
