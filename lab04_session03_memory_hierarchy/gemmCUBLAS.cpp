@@ -38,7 +38,7 @@
 	} while (0)
 
 /* CPU implementation of a simple version of sgemm */
-void simple_sgemm(float *C, const float *A, const float *B, unsigned int M,
+void simple_sgemm(const float *A, const float *B, float *C, unsigned int M,
 		  unsigned int N, unsigned int P)
 {
 	// Iterate over rows in matrix a
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 
 	auto cpu_start = std::chrono::high_resolution_clock::now();
 	// CPU gemm
-	simple_sgemm(h_C, h_A, h_B, M, N, P);
+	simple_sgemm(h_A, h_B, h_C, M, N, P);
 	auto cpu_stop = std::chrono::high_resolution_clock::now();
 
 	event_elaspsed_time_ms =
