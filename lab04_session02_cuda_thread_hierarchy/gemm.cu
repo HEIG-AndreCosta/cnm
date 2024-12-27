@@ -13,11 +13,12 @@
 __global__ void gemm(float const *a, float const *b, float *c, size_t m,
 		     size_t n, size_t p)
 {
-	size_t row = blockDim.x * blockIdx.x + threadIdx.x;
-	size_t col = blockDim.y * blockIdx.y + threadIdx.y;
+	size_t thread_id = blockIdx.x * blockDim.x + threadIdx.x;
+	size_t row = thread_id / p;
+	size_t col = thread_id % p;
 
 	printf("Row %zu Col %zu\n", row, col);
-	if (row < m && col < p) {
+	if (row < m) {
 		float acc_sum = 0;
 		for (size_t k = 0; k < n; ++k) {
 			acc_sum += a[row * n + k] * b[k * p + col];
