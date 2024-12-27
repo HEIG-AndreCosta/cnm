@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	printf("Running \"%s\" with matrix dim (%i,%i) * (%i,%i) = (%i,%i)\n",
-	       argv[0], N, M, N, P, M, P);
+	       argv[0], M, N, N, P, M, P);
 
 	// host memory
 	float *h_A, *h_B, *h_C;
