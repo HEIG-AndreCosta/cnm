@@ -172,10 +172,9 @@ int main(int argc, char const *argv[])
 	const size_t block_size = 256;
 	const size_t num_blocks = ((m * p) + block_size - 1) / block_size;
 
-
-	auto cpu_start = std::chrono::high_resolution_clock::now();
+	cpu_start = std::chrono::high_resolution_clock::now();
 	gemm<<<num_blocks, block_size>>>(d_a, d_b, d_c, m, n, p);
-	auto cpu_stop = std::chrono::high_resolution_clock::now();
+	cpu_stop = std::chrono::high_resolution_clock::now();
 
 	//TODO: Copy memory from device to host and check for errors
 
