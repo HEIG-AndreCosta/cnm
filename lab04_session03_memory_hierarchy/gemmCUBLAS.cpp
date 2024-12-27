@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 	       event_elaspsed_time_ms);
 
 	// Allocate new host memory for CUBLAS result
-	h_C = (float *)malloc(mem_matrix_size);
+	h_C = (float *)malloc(M * P * sizeof(float));
 
 	if (h_C == 0) {
 		fprintf(stderr, "Error allocating host memory\n");
@@ -191,9 +191,9 @@ int main(int argc, char **argv)
 
 	// Read CUBLAS result
 	checkCublasErrors(
-		cublasGetVector(matrix_size, sizeof(float), d_C, 1, h_C, 1));
+		cublasGetVector(M * P, sizeof(float), d_C, 1, h_C, 1));
 
-	bool result_check = check_sgemm_results(h_C, h_C_ref, matrix_size);
+	bool result_check = check_sgemm_results(h_C, h_C_ref, M * P);
 
 	// Memory clean up
 	free(h_A);
