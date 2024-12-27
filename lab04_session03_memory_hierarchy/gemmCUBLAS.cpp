@@ -74,6 +74,10 @@ bool check_sgemm_results(const float *result, const float *reference,
 
 int main(int argc, char **argv)
 {
+	if (argc < 4) {
+		printf("Usages %s <N> <M> <P>\n", argv[0]);
+		return 1;
+	}
 	const int N = std::atoi(argv[1]);
 	const int M = std::atoi(argv[2]);
 	const int P = std::atoi(argv[3]);
