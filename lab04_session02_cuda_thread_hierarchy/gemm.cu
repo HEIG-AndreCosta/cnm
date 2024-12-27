@@ -190,11 +190,9 @@ int main(int argc, char const *argv[])
 	cudaEventCreate(&start);
 	cudaEventCreate(&stop);
 
-	cpu_start = std::chrono::high_resolution_clock::now();
 	cudaEventRecord(start);
 	gemm<<<gridDim, blockDim>>>(d_a, d_b, d_c, m, n, p);
 	cudaEventRecord(stop);
-	cpu_stop = std::chrono::high_resolution_clock::now();
 
 	//TODO: Copy memory from device to host and check for errors
 
@@ -223,15 +221,8 @@ int main(int argc, char const *argv[])
 
 	/* ********************************************************************* */
 
-	event_elaspsed_time_ms =
-		std::chrono::duration<float, std::milli>(cpu_stop - cpu_start)
-			.count();
-	printf("Complete GEMM in GPU in %.3f ms (chrono)\n",
-	       event_elaspsed_time_ms);
-
 	cudaEventElapsedTime(&event_elaspsed_time_ms, start, stop);
-
-	printf("Complete GEMM in GPU in %.3f ms (cuda event)\n",
+	printf("Complete GEMM in GPU in %.3f ms (with cuda event)\n",
 	       event_elaspsed_time_ms);
 	// Check SAXPY GPU results
 	printf("Checking GPU GEMM: %s\n",
