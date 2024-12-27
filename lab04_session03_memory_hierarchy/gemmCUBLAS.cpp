@@ -159,8 +159,8 @@ int main(int argc, char **argv)
 			cublasSetVector(M * N, sizeof(float), h_A, 1, d_A, 1));
 		checkCublasErrors(
 			cublasSetVector(N * P, sizeof(float), h_B, 1, d_B, 1));
-		checkCublasErrors(
-			cublasSetVector(M * P, sizeof(float), h_C, 1, d_C, 1));
+		/*checkCublasErrors(*/
+		/*	cublasSetVector(M * P, sizeof(float), h_C, 1, d_C, 1));*/
 
 		// Warmup operation with cublas
 		checkCublasErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N,
