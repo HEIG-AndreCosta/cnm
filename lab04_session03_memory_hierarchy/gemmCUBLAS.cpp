@@ -83,9 +83,14 @@ int main(int argc, char **argv)
 		printf("Usages %s <N> <M> <P>\n", argv[0]);
 		return 1;
 	}
-	const int N = std::atoi(argv[1]);
-	const int M = std::atoi(argv[2]);
+	const int M = std::atoi(argv[1]);
+	const int N = std::atoi(argv[2]);
 	const int P = std::atoi(argv[3]);
+
+	const int A_ELEMS = M * N;
+	const int B_ELEMS = N * P;
+	const int C_ELEMS = M * P;
+
 	if (!N || !M || !P) {
 		printf("N M and P can't be 0\n");
 		return 1;
@@ -101,9 +106,9 @@ int main(int argc, char **argv)
 	float event_elaspsed_time_ms = 0.0f;
 
 	// Allocate host memory for the matrices
-	h_A = (float *)malloc(M * N * sizeof(float));
-	h_B = (float *)malloc(N * P * sizeof(float));
-	h_C = (float *)malloc(M * P * sizeof(float));
+	h_A = (float *)malloc(A_ELEMS * sizeof(float));
+	h_B = (float *)malloc(B_ELEMS * sizeof(float));
+	h_C = (float *)calloc(C_ELEMS, sizeof(float));
 
 	if (h_A == 0 || h_B == 0 || h_C == 0) {
 		fprintf(stderr, "Error allocating host memory\n");
@@ -111,15 +116,13 @@ int main(int argc, char **argv)
 	}
 
 	// Fill the matrices with test data
-	for (size_t i = 0; i < M * N; ++i) {
+	for (size_t i = 0; i < A_ELEMS; ++i) {
 		h_A[i] = rand() / (float)RAND_MAX;
 	}
 
-	for (size_t i = 0; i < N * P; ++i) {
+	for (size_t i = 0; i < B_ELEMS; ++i) {
 		h_B[i] = rand() / (float)RAND_MAX;
 	}
-
-	memset(h_C, 0, M * P * sizeof(float));
 
 	auto cpu_start = std::chrono::high_resolution_clock::now();
 	// CPU gemm
@@ -148,17 +151,17 @@ int main(int argc, char **argv)
 
 		// Allocate device memory for the matrices
 		checkCudaErrors(
-			cudaMalloc((void **)&d_A, M * N * sizeof(float)));
+			cudaMalloc((void **)&d_A, A_ELEMS * sizeof(float)));
 		checkCudaErrors(
-			cudaMalloc((void **)&d_B, N * P * sizeof(float)));
+			cudaMalloc((void **)&d_B, B_ELEMS * sizeof(float)));
 		checkCudaErrors(
-			cudaMalloc((void **)&d_C, M * P * sizeof(float)));
+			cudaMalloc((void **)&d_C, C_ELEMS * sizeof(float)));
 
 		// Initialize the device matrices with the host matrices
-		checkCublasErrors(
-			cublasSetVector(M * N, sizeof(float), h_A, 1, d_A, 1));
-		checkCublasErrors(
-			cublasSetVector(N * P, sizeof(float), h_B, 1, d_B, 1));
+		checkCublasErrors(cublasSetVector(A_ELEMS, sizeof(float), h_A,
+						  1, d_A, 1));
+		checkCublasErrors(cublasSetVector(B_ELEMS, sizeof(float), h_B,
+						  1, d_B, 1));
 
 		// Warmup operation with cublas
 		checkCublasErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N,
@@ -189,7 +192,7 @@ int main(int argc, char **argv)
 	       event_elaspsed_time_ms);
 
 	// Allocate new host memory for CUBLAS result
-	h_C = (float *)malloc(M * P * sizeof(float));
+	h_C = (float *)calloc(C_ELEMS * sizeof(float));
 
 	if (h_C == 0) {
 		fprintf(stderr, "Error allocating host memory\n");
@@ -198,7 +201,7 @@ int main(int argc, char **argv)
 
 	// Read CUBLAS result
 	checkCublasErrors(
-		cublasGetVector(M * P, sizeof(float), d_C, 1, h_C, 1));
+		cublasGetVector(C_ELEMS, sizeof(float), d_C, 1, h_C, 1));
 	for (size_t i = 0; i < M; ++i) {
 		for (size_t j = 0; j < P; ++j) {
 			printf("%f ", h_C[i * P + j]);
@@ -212,7 +215,7 @@ int main(int argc, char **argv)
 		printf("\n");
 	}
 
-	bool result_check = check_sgemm_results(h_C, h_C_ref, M * P);
+	bool result_check = check_sgemm_results(h_C, h_C_ref, C_ELEMS);
 
 	// Memory clean up
 	free(h_A);
