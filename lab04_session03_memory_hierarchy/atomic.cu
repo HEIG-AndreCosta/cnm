@@ -8,7 +8,7 @@ __global__ void increment(int *a, size_t size)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	i = i % size;
-	atomicInc(a + i, 1);
+	atomicAdd(a + i, 1);
 }
 
 // TODO implement increment kernel with CUDA atomics
