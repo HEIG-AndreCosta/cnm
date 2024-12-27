@@ -113,7 +113,7 @@ int main(int argc, char const *argv[])
 	printf("Checking CPU GEMM: %s\n",
 	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
 
-	print_matrix(h_c, m, p);
+	print_matrix(h_c, m * p);
 
 	// Clean up result
 	for (size_t i = 0; i < m * p; ++i) {
@@ -184,7 +184,7 @@ int main(int argc, char const *argv[])
 		cudaFree(d_c);
 		return 1;
 	}
-	print_matrix(h_c, m, p);
+	print_matrix(h_c, m * p);
 
 	//TODO: Free memory from device to host and check for errors
 
