@@ -192,7 +192,7 @@ int main(int argc, char **argv)
 	       event_elaspsed_time_ms);
 
 	// Allocate new host memory for CUBLAS result
-	h_C = (float *)calloc(C_ELEMS * sizeof(float));
+	h_C = (float *)calloc(C_ELEMS, sizeof(float));
 
 	if (h_C == 0) {
 		fprintf(stderr, "Error allocating host memory\n");
