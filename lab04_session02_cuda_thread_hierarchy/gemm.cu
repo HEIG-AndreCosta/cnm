@@ -184,8 +184,16 @@ int main(int argc, char const *argv[])
 	dim3 blockDim(16, 16); // Block size of 16x16 threads
 	dim3 gridDim((p + blockDim.x - 1) / blockDim.x,
 		     (m + blockDim.y - 1) / blockDim.y);
+
+	cudaEvent_t start, stop;
+
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
 	cpu_start = std::chrono::high_resolution_clock::now();
+	cudaEventRecord(start);
 	gemm<<<gridDim, blockDim>>>(d_a, d_b, d_c, m, n, p);
+	cudaEventRecord(stop);
 	cpu_stop = std::chrono::high_resolution_clock::now();
 
 	//TODO: Copy memory from device to host and check for errors
@@ -218,11 +226,19 @@ int main(int argc, char const *argv[])
 	event_elaspsed_time_ms =
 		std::chrono::duration<float, std::milli>(cpu_stop - cpu_start)
 			.count();
-	printf("Complete GEMM in GPU in %.3f ms\n", event_elaspsed_time_ms);
+	printf("Complete GEMM in GPU in %.3f ms (chrono)\n",
+	       event_elaspsed_time_ms);
+
+	cudaEventElapsedTime(&event_elaspsed_time_ms, start, stop);
+
+	printf("Complete GEMM in GPU in %.3f ms (cuda event)\n",
+	       event_elaspsed_time_ms);
 	// Check SAXPY GPU results
 	printf("Checking GPU GEMM: %s\n",
 	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
 
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 	free(h_a);
 	free(h_b);
 	free(h_c);
