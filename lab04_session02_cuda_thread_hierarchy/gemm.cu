@@ -173,7 +173,10 @@ int main(int argc, char const *argv[])
 	const size_t block_size = 256;
 	const size_t num_blocks = ((m * p) + block_size - 1) / block_size;
 
+
+	auto cpu_start = std::chrono::high_resolution_clock::now();
 	gemm<<<num_blocks, block_size>>>(d_a, d_b, d_c, m, n, p);
+	auto cpu_stop = std::chrono::high_resolution_clock::now();
 
 	//TODO: Copy memory from device to host and check for errors
 
@@ -202,6 +205,10 @@ int main(int argc, char const *argv[])
 
 	/* ********************************************************************* */
 
+	event_elaspsed_time_ms =
+		std::chrono::duration<float, std::milli>(cpu_stop - cpu_start)
+			.count();
+	printf("Complete GEMM in GPU in %.3f ms\n", event_elaspsed_time_ms);
 	// Check SAXPY GPU results
 	printf("Checking GPU GEMM: %s\n",
 	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
