@@ -1,0 +1,3 @@
+atomic_answers.cu
+coalescing_answers.cu
+gemm_shared_mem_answers.cu
