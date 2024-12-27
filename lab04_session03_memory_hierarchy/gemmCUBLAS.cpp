@@ -64,6 +64,7 @@ bool check_sgemm_results(const float *result, const float *reference,
 	float diff;
 
 	for (int i = 0; i < size; ++i) {
+		printf("Got %g Expected %g\n", result[i], reference[i]);
 		diff = reference[i] - result[i];
 		error_norm += diff * diff;
 		ref_norm += reference[i] * reference[i];
