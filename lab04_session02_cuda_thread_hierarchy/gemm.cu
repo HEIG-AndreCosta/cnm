@@ -171,7 +171,7 @@ int main(int argc, char const *argv[])
 	//TODO: Call kernel and check for errors
 
 	const size_t block_size = 256;
-	const size_t num_blocks = ((m * n) + block_size - 1) / block_size;
+	const size_t num_blocks = ((m * p) + block_size - 1) / block_size;
 
 	gemm<<<num_blocks, block_size>>>(d_a, d_b, d_c, m, n, p);
 
