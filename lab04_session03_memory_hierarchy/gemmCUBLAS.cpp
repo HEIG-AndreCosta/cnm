@@ -41,15 +41,18 @@
 void simple_sgemm(float *C, const float *A, const float *B, unsigned int M,
 		  unsigned int N, unsigned int P)
 {
-	for (int i = 0; i < M; ++i)
-		for (int j = 0; j < P; ++j) {
-			float sum = 0;
-			for (int k = 0; k < N; ++k) {
-				sum += A[k + N * i] * B[k * P + j];
+	// Iterate over rows in matrix a
+	for (size_t i = 0; i < M; ++i) {
+		// Iterate over columns in matrix b
+		for (size_t j = 0; j < P; ++j) {
+			float acc_sum = 0;
+			// Iterate over each elment in row and column
+			for (size_t k = 0; k < N; ++k) {
+				acc_sum += A[i * N + k] * B[k * P + j];
 			}
-
-			C[i * P + j] = sum;
+			C[i * P + j] = acc_sum;
 		}
+	}
 }
 
 // Check relative error
