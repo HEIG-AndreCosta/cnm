@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -139,11 +140,11 @@ int main(int argc, char **argv)
 
 	// Fill the matrices with test data
 	for (size_t i = 0; i < A_ELEMS; ++i) {
-		h_A[i] = i;
+		h_A[i] = (float)rand() / RAND_MAX;
 	}
 
 	for (size_t i = 0; i < B_ELEMS; ++i) {
-		h_B[i] = i;
+		h_B[i] = (float)rand() / RAND_MAX;
 	}
 
 	auto cpu_start = std::chrono::high_resolution_clock::now();
