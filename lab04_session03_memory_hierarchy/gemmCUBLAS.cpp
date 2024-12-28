@@ -224,14 +224,14 @@ int main(int argc, char **argv)
 	// Read CUBLAS result
 	checkCublasErrors(
 		cublasGetVector(C_ELEMS, sizeof(float), d_C, 1, h_C, 1));
-	printf("Matrix A\n");
-	print_matrix(h_A, M, N);
-	printf("Matrix B\n");
-	print_matrix(h_B, N, P);
-	printf("Matrix C GPU\n");
-	print_matrix(h_C, M, P);
-	printf("Matrix C CPU\n");
-	print_matrix(h_C_ref, M, P);
+	//printf("Matrix A\n");
+	//print_matrix(h_A, M, N);
+	//printf("Matrix B\n");
+	//print_matrix(h_B, N, P);
+	//printf("Matrix C GPU\n");
+	//print_matrix(h_C, M, P);
+	//printf("Matrix C CPU\n");
+	//print_matrix(h_C_ref, M, P);
 
 	bool result_check = check_sgemm_results(h_C, h_C_ref, C_ELEMS);
 
