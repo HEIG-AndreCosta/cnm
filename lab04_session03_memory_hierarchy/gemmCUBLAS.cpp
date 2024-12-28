@@ -187,8 +187,8 @@ int main(int argc, char **argv)
 
 		// Warmup operation with cublas
 		checkCublasErrors(cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N,
-					      M, P, N, &alpha, d_A, N, d_B, P,
-					      &beta, d_C, N));
+					      M, P, N, &alpha, d_A, M, d_B, N,
+					      &beta, d_C, M));
 
 		cudaEvent_t start, stop;
 		checkCudaErrors(cudaEventCreate(&start));
