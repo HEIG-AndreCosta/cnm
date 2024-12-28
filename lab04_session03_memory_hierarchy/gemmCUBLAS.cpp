@@ -90,6 +90,15 @@ bool check_sgemm_results(const float *result, const float *reference,
 	return (error_norm / ref_norm < 1e-6f);
 }
 
+void print_matrix(const float *matrix, unsigned int M, unsigned int N)
+{
+	for (size_t i = 0; i < M; ++i) {
+		for (size_t j = 0; j < N; ++j) {
+			printf("%f ", matrix[i * N + j]);
+		}
+		printf("\n");
+	}
+}
 int main(int argc, char **argv)
 {
 	if (argc < 4) {
@@ -130,17 +139,16 @@ int main(int argc, char **argv)
 
 	// Fill the matrices with test data
 	for (size_t i = 0; i < A_ELEMS; ++i) {
-		h_A[i] = rand() / (float)RAND_MAX;
+		h_A[i] = i;
 	}
 
 	for (size_t i = 0; i < B_ELEMS; ++i) {
-		h_B[i] = rand() / (float)RAND_MAX;
+		h_B[i] = i;
 	}
 
 	auto cpu_start = std::chrono::high_resolution_clock::now();
 	// CPU gemm
-	//simple_sgemm(h_A, h_B, h_C, M, N, P);
-	squared_sgemm(h_A, h_B, h_C, M);
+	simple_sgemm(h_A, h_B, h_C, M, N, P);
 	auto cpu_stop = std::chrono::high_resolution_clock::now();
 
 	event_elaspsed_time_ms =
@@ -216,18 +224,14 @@ int main(int argc, char **argv)
 	// Read CUBLAS result
 	checkCublasErrors(
 		cublasGetVector(C_ELEMS, sizeof(float), d_C, 1, h_C, 1));
-	for (size_t i = 0; i < M; ++i) {
-		for (size_t j = 0; j < P; ++j) {
-			printf("%f ", h_C[i * P + j]);
-		}
-		printf("\n");
-	}
-	for (size_t i = 0; i < M; ++i) {
-		for (size_t j = 0; j < P; ++j) {
-			printf("%f ", h_C_ref[i * P + j]);
-		}
-		printf("\n");
-	}
+	printf("Matrix A\n");
+	print_matrix(h_A, M, N);
+	printf("Matrix B\n");
+	print_matrix(h_B, N, P);
+	printf("Matrix C GPU\n");
+	print_matrix(h_C, M, P);
+	printf("Matrix C CPU\n");
+	print_matrix(h_C_ref, M, P);
 
 	bool result_check = check_sgemm_results(h_C, h_C_ref, C_ELEMS);
 
