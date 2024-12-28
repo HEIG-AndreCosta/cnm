@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 		float alpha = 1.0f;
 		float beta = 0.0f;
 		float total_time = 0.0f;
-		unsigned int num_iterations = 10;
+		unsigned int num_iterations = 1;
 
 		// Allocate device memory for the matrices
 		checkCudaErrors(
