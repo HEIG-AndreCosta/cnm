@@ -55,6 +55,19 @@ void simple_sgemm(const float *A, const float *B, float *C, unsigned int M,
 	}
 }
 
+void squared_sgemm(const float *A, const float *B, float *C, unsigned int n)
+{
+	for (int i = 0; i < n; ++i)
+		for (int j = 0; j < n; ++j) {
+			float sum = 0;
+			for (int k = 0; k < n; ++k) {
+				sum += A[k * n + i] * B[j * n + k];
+			}
+
+			C[j * n + i] = sum;
+		}
+}
+
 // Check relative error
 bool check_sgemm_results(const float *result, const float *reference,
 			 unsigned int size)
@@ -126,7 +139,8 @@ int main(int argc, char **argv)
 
 	auto cpu_start = std::chrono::high_resolution_clock::now();
 	// CPU gemm
-	simple_sgemm(h_A, h_B, h_C, M, N, P);
+	//simple_sgemm(h_A, h_B, h_C, M, N, P);
+	squared_sgemm(h_A, h_B, h_C, M);
 	auto cpu_stop = std::chrono::high_resolution_clock::now();
 
 	event_elaspsed_time_ms =
