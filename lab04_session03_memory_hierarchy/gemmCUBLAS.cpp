@@ -73,19 +73,18 @@ void squared_sgemm(const float *A, const float *B, float *C, unsigned int n)
 bool check_sgemm_results(const float *result, const float *reference,
 			 unsigned int size)
 {
-	float error_norm = 0;
-	float ref_norm = 0;
-	float diff;
+	double error_norm = 0;
+	double ref_norm = 0;
+	double diff;
 
 	for (int i = 0; i < size; ++i) {
-		printf("Got %g Expected %g\n", result[i], reference[i]);
 		diff = reference[i] - result[i];
 		error_norm += diff * diff;
 		ref_norm += reference[i] * reference[i];
 	}
 
-	error_norm = (float)sqrt((double)error_norm);
-	ref_norm = (float)sqrt((double)ref_norm);
+	error_norm = (double)sqrt((double)error_norm);
+	ref_norm = (double)sqrt((double)ref_norm);
 	printf("  %f\n  %f\n", error_norm, ref_norm);
 	// Should check ref_norm != 0
 	return (error_norm / ref_norm < 1e-6f);
