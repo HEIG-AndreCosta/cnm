@@ -37,20 +37,20 @@ int main(int argc, char const *argv[])
 
 
     if (argc < 3 || argc > 4) {
-        printf("Usage: %s <num_block> <block_size>   \n", argv[0]);
-        printf("Usage: %s <num_block_x> <num_block_y> <block_size>   \n", argv[0]);
+        printf("Usage: %s <block_size> <num_block>   \n", argv[0]);
+        printf("Usage: %s <block_size> <num_block_x> <num_block_y>    \n", argv[0]);
         return 1;
     }
 
-    const int block_size = atoi(argv[2]);
-    const int num_block = atoi(argv[1]);
+    const int block_size = atoi(argv[1]);
+    const int num_block = atoi(argv[2]);
 
     if (block_size <= 0 || num_block <= 0) {
         printf("Block size or num block must be positive integers.\n");
         return 1;
     }
 
-    const int num_block_y = argc == 4 ? atoi(argv[2]):1;
+    const int num_block_y = argc == 4 ? atoi(argv[3]):1;
     
     if (num_block_y <= 0) {
         printf("Block size must be positive integers.\n");
