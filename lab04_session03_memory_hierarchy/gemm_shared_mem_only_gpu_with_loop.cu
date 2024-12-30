@@ -9,8 +9,8 @@
 // b: n x p
 // c: m x p
 __global__ void gemm_shared_mem(float *a, float *b, float *c, size_t m,
-				size_t n, size_t p, size_t tile_size_x,
-				size_t tile_size_y)
+				size_t n, size_t p, const size_t tile_size_x,
+				const size_t tile_size_y)
 {
 	// row a column based on thread index inside the block and grid
 	int row = blockIdx.y * blockDim.y + threadIdx.y;
