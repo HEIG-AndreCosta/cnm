@@ -110,6 +110,14 @@ int main(int argc, char const *argv[])
 
 	scalar_multiplication<<<num_blocks, block_size>>>(n, a, d_x, d_y,
 							    d_z);
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess) {
+        printf("Error after kernel: %s\n", cudaGetErrorString(err));
+        cudaFree(d_x);
+		cudaFree(d_y);
+		cudaFree(d_z);
+        return 1;
+    }
 
 	//TODO: Copy memory from device to host and check for errors
 
