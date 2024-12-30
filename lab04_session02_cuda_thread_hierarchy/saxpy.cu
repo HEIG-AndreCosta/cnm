@@ -50,7 +50,7 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-    const int num_block_y = argc == 4 ? atoi(argv[2]):0;
+    const int num_block_y = argc == 4 ? atoi(argv[2]):1;
     
     if (num_block_y <= 0) {
         printf("Block size must be positive integers.\n");
