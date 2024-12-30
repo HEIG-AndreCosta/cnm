@@ -41,29 +41,30 @@ int main(int argc, char const *argv[])
         printf("Usage: %s <num_block_x> <num_block_y> <block_size>   \n", argv[0]);
         return 1;
     }
-if (argc == 3) {
-        const int block_size = atoi(argv[2]);
-        const int num_block = atoi(argv[1]);
 
-        if (block_size <= 0) {
-            printf("Block size must be positive integers.\n");
-            return 1;
-        }
-    } 
-    else {
-        const int block_size = atoi(argv[3]);
-        const int num_block_x = atoi(argv[1]);
-        const int num_block_y = atoi(argv[2]);
+    const int block_size = atoi(argv[2]);
+    const int num_block = atoi(argv[1]);
 
-        if (block_size <= 0) {
-            printf("Block size must be positive integers.\n");
-            return 1;
-        }
+    if (block_size <= 0 || num_block <= 0) {
+        printf("Block size or num block must be positive integers.\n");
+        return 1;
     }
 
-    if (block_size <= 0) {
+    const int num_block_y = argc == 4 ? atoi(argv[2]):0;
+    
+    if (num_block_y <= 0) {
         printf("Block size must be positive integers.\n");
         return 1;
+    }
+
+    if (argc == 3) {
+        printf("Block size: %d\n", block_size);
+        printf("Num block: %d\n", num_block);
+    }
+    else {
+        printf("Block size: %d\n", block_size);
+        printf("Num block x: %d\n", num_block);
+        printf("Num block y: %d\n", num_block_y);
     }
 
 	int n = 1 << 20; //2^20
@@ -135,7 +136,7 @@ if (argc == 3) {
 		cudaFree(d_z);
 		return 1;
 	}
-    
+
 	//TODO: Call kernel and check for errors
     if (argc == 3 ) {
         scalar_multiplication<<<num_block, block_size>>>(n, a, d_x, d_y,
