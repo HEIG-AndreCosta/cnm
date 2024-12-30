@@ -36,13 +36,30 @@ int main(int argc, char const *argv[])
 {
 
 
-    if (argc != 3) {
+    if (argc < 3 || argc > 4) {
         printf("Usage: %s <num_block> <block_size>   \n", argv[0]);
+        printf("Usage: %s <num_block_x> <num_block_y> <block_size>   \n", argv[0]);
         return 1;
     }
+if (argc == 3) {
+        const int block_size = atoi(argv[2]);
+        const int num_block = atoi(argv[1]);
 
-    const int block_size = atoi(argv[2]);
-    const int num_block = atoi(argv[1]);
+        if (block_size <= 0) {
+            printf("Block size must be positive integers.\n");
+            return 1;
+        }
+    } 
+    else {
+        const int block_size = atoi(argv[3]);
+        const int num_block_x = atoi(argv[1]);
+        const int num_block_y = atoi(argv[2]);
+
+        if (block_size <= 0) {
+            printf("Block size must be positive integers.\n");
+            return 1;
+        }
+    }
 
     if (block_size <= 0) {
         printf("Block size must be positive integers.\n");
@@ -118,9 +135,17 @@ int main(int argc, char const *argv[])
 		cudaFree(d_z);
 		return 1;
 	}
+    
 	//TODO: Call kernel and check for errors
-	scalar_multiplication<<<num_block, block_size>>>(n, a, d_x, d_y,
-							    d_z);
+    if (argc == 3 ) {
+        scalar_multiplication<<<num_block, block_size>>>(n, a, d_x, d_y,
+                                    d_z);
+    }
+    else {
+        scalar_multiplication<<< {num_block_x, num_block_y}, block_size>>>(n, a, d_x, d_y,
+                                    d_z);
+    }
+        
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         printf("Error after kernel: %s\n", cudaGetErrorString(err));
