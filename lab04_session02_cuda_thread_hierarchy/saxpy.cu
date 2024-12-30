@@ -34,6 +34,21 @@ bool check_saxpy(int n, float a, const float *x, const float *y, float *z)
 
 int main(int argc, char const *argv[])
 {
+
+
+    if (argc != 3) {
+        printf("Usage: %s <block_size> <num_blocks>\n", argv[0]);
+        return 1;
+    }
+
+    int block_size = atoi(argv[1]);
+    int num_blocks = atoi(argv[2]);
+
+    if (block_size <= 0 || num_blocks <= 0) {
+        printf("Block size and number of blocks must be positive integers.\n");
+        return 1;
+    }
+
 	int n = 1 << 20; //2^20
 	float a = 2;
 
