@@ -36,12 +36,13 @@ int main(int argc, char const *argv[])
 {
 
 
-    if (argc != 2) {
-        printf("Usage: %s <block_size> \n", argv[0]);
+    if (argc != 3) {
+        printf("Usage: %s <num_block> <block_size>   \n", argv[0]);
         return 1;
     }
 
-    const int block_size = atoi(argv[1]);
+    const int block_size = atoi(argv[2]);
+    const int num_block = atoi(argv[1]);
 
     if (block_size <= 0) {
         printf("Block size must be positive integers.\n");
@@ -118,9 +119,6 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	//TODO: Call kernel and check for errors
-
-	const size_t num_blocks = (n + block_size - 1) / block_size;
-
 	scalar_multiplication<<<num_blocks, block_size>>>(n, a, d_x, d_y,
 							    d_z);
     cudaError_t err = cudaGetLastError();
