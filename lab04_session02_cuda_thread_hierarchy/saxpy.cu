@@ -143,7 +143,7 @@ int main(int argc, char const *argv[])
                                     d_z);
     }
     else {
-        scalar_multiplication<<< {num_block_x, num_block_y}, block_size>>>(n, a, d_x, d_y,
+        scalar_multiplication<<< {num_block, num_block_y}, block_size>>>(n, a, d_x, d_y,
                                     d_z);
     }
         
