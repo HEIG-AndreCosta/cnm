@@ -119,7 +119,7 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	//TODO: Call kernel and check for errors
-	scalar_multiplication<<<num_blocks, block_size>>>(n, a, d_x, d_y,
+	scalar_multiplication<<<num_block, block_size>>>(n, a, d_x, d_y,
 							    d_z);
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
