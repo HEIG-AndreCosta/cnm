@@ -11,31 +11,39 @@ __global__ void aux(float *a, int s)
     ...
 ```
 
-1. `a[i] = e;`
+1. `a[i] = e;` OUI
 
-2. `e = a[i];`
+2. `e = a[i];` OUI
 
-4. `a[i+s] = e;`
+4. `a[i+s] = e;` OUI (dépend de la valeur de `s` s'il en résulte un alignement) 
 
-3. `a[i*s] = e;`
+3. `a[i*s] = e;` OUI si `s == 1` sinon NON
 
 
 Implement the kernel for number 3 and number 4 and measure the time it takes to complete different executions using different values of `s`. Comment the results.
 
+![alt text](image.png)
+
+Voici le graphe représentant le temps d'exécution en fonction du décalage `s` pour les Kernel Patterns 3 et 4 :
+
+Kernel Pattern 3 : On observe une augmentation progressive du temps d'exécution avec `s` en raison de la `sparsité`.
+
+Kernel Pattern 4 : Le temps reste relativement constant, la dépendence à `s` est moindre.
+
 ## Stage 3
 
-* How many times do you read each matrix from global memory in the shared memory implementation?
->
-* How long does the gpu gemm with shared memory take? 
-* Now, double the size of *n*, *m* and *p*. How long does it take now?
+**How many times do you read each matrix from global memory in the shared memory implementation?**
+avec une matrice de taille 
+**How long does the gpu gemm with shared memory take?** 
+**Now, double the size of *n*, *m* and *p*. How long does it take now?**
 
 Compare with the results obtained in the previous lab
 
 ## Stage 4
 
-* Does the original increment kernel produce the correct result? Why?
-* How much time does the original increment kernel take?
-* How much time does the increment kernel with atomics take? Does it take more or less time than the original kernel? Why?
+**Does the original increment kernel produce the correct result? Why?**
+**How much time does the original increment kernel take?**
+**How much time does the increment kernel with atomics take? Does it take more or less time than the original kernel? Why?**
 
  
 ## Stage 5.1

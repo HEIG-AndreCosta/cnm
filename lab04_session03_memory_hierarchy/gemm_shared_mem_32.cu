@@ -9,8 +9,7 @@
 // b: n x p
 // c: m x p
 __global__ void gemm_shared_mem(float *a, float *b, float *c, size_t m,
-				size_t n, size_t p, const size_t tile_size_x,
-				const size_t tile_size_y)
+				size_t n, size_t p)
 {
 	// row a column based on thread index inside the block and grid
 	int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -21,10 +20,9 @@ __global__ void gemm_shared_mem(float *a, float *b, float *c, size_t m,
 	const int TILE_SIZE = blockDim.x;
 
 	// Shared memory for tiles
-	__shared__ float aTile
-		[tile_size_x]
-		[tile_size_y]; // TILE_SIZE must not exceed shared memory limits
-	__shared__ float bTile[tile_size_x][tile_size_y];
+	__shared__ float
+		aTile[32][32]; // TILE_SIZE must not exceed shared memory limits
+	__shared__ float bTile[32][32];
 
 	// Iterate over tiles in the shared dimension
 	for (int t = 0; t < (n + TILE_SIZE - 1) / TILE_SIZE; ++t) {
@@ -94,10 +92,9 @@ bool check_gemm(float const *a, float const *b, float const *c, size_t m,
 
 int main(int argc, char const *argv[])
 {
-	size_t = global_size = 512;
-	size_t m = global_size;
-	size_t n = global_size;
-	size_t p = global_size;
+	size_t m = 512;
+	size_t n = 512;
+	size_t p = 512;
 
 	float event_elaspsed_time_ms = 0;
 
@@ -124,6 +121,21 @@ int main(int argc, char const *argv[])
 		h_b[i] = 1.0;
 	};
 
+	printf("Running GEMM in CPU...\n");
+	auto cpu_start = std::chrono::high_resolution_clock::now();
+	gemm_cpu(h_a, h_b, h_c, m, n, p);
+	auto cpu_stop = std::chrono::high_resolution_clock::now();
+
+	// Check SAXPY CPU results
+	printf("Checking CPU GEMM: %s\n",
+	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
+
+	event_elaspsed_time_ms =
+		std::chrono::duration<float, std::milli>(cpu_stop - cpu_start)
+			.count();
+
+	printf("Finished GEMM in CPU in %.3f ms\n", event_elaspsed_time_ms);
+
 	// Clean up result
 	for (size_t i = 0; i < m * p; ++i) {
 		h_c[i] = 0.0;
@@ -131,59 +143,56 @@ int main(int argc, char const *argv[])
 
 	/* ********************************************************************* */
 
-	for (int i = 0; i < global_size; i += 2) {
-		float *d_a, *d_b, *d_c;
+	float *d_a, *d_b, *d_c;
 
-		cudaEvent_t start, stop;
+	cudaEvent_t start, stop;
 
-		cudaEventCreate(&start);
-		cudaEventCreate(&stop);
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 
-		// Device memory allocation
-		cudaMalloc((void **)&d_a, m * n * sizeof(float));
-		cudaMalloc((void **)&d_b, n * p * sizeof(float));
-		cudaMalloc((void **)&d_c, m * p * sizeof(float));
+	// Device memory allocation
+	cudaMalloc((void **)&d_a, m * n * sizeof(float));
+	cudaMalloc((void **)&d_b, n * p * sizeof(float));
+	cudaMalloc((void **)&d_c, m * p * sizeof(float));
 
-		// Device memory inialization
-		cudaMemcpy(d_a, h_a, m * n * sizeof(float),
-			   cudaMemcpyHostToDevice);
-		cudaMemcpy(d_b, h_b, n * p * sizeof(float),
-			   cudaMemcpyHostToDevice);
+	// Device memory inialization
+	cudaMemcpy(d_a, h_a, m * n * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_b, h_b, n * p * sizeof(float), cudaMemcpyHostToDevice);
 
-		// Excution configuration
-		dim3 grid_size(m / BLOCK_SIZE, p / BLOCK_SIZE);
-		dim3 block_size(BLOCK_SIZE, BLOCK_SIZE);
+	// Excution configuration
+	dim3 grid_size(m / BLOCK_SIZE, p / BLOCK_SIZE);
+	dim3 block_size(BLOCK_SIZE, BLOCK_SIZE);
 
-		// Kernel execution and measuring
-		printf("Running GEMM shared mem in GPU...\n");
-		cudaEventRecord(start);
-		gemm_shared_mem<<<grid_size, block_size> > >(d_a, d_b, d_c, m,
-							     n, p, i, i);
-		cudaEventRecord(stop);
+	// Kernel execution and measuring
+	printf("Running GEMM shared mem in GPU...\n");
+	cudaEventRecord(start);
+	gemm_shared_mem<<<grid_size, block_size>>>(d_a, d_b, d_c, m, n, p);
+	cudaEventRecord(stop);
 
-		// Copy result from device
-		cudaMemcpy(h_c, d_c, m * p * sizeof(float),
-			   cudaMemcpyDeviceToHost);
+	// Copy result from device
+	cudaMemcpy(h_c, d_c, m * p * sizeof(float), cudaMemcpyDeviceToHost);
 
-		cudaEventElapsedTime(&event_elaspsed_time_ms, start, stop);
+	// Check result
+	printf("Checking GPU shared mem GEMM: %s\n",
+	       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error");
 
-		printf("%d,%s, %.3f ms\n", i,
-		       check_gemm(h_a, h_b, h_c, m, n, p) ? "Success" : "Error",
-		       event_elaspsed_time_ms);
+	cudaEventElapsedTime(&event_elaspsed_time_ms, start, stop);
 
-		// Event cleaning
-		cudaEventDestroy(start);
-		cudaEventDestroy(stop);
+	printf("Finished GEMM with shared mem in GPU in %.3f ms\n",
+	       event_elaspsed_time_ms);
 
-		// Memory deallocation
-		cudaFree(d_a);
-		cudaFree(d_b);
-		cudaFree(d_c);
+	// Event cleaning
+	cudaEventDestroy(start);
+	cudaEventDestroy(stop);
 
-		delete[] h_a;
-		delete[] h_b;
-		delete[] h_c;
-	}
+	// Memory deallocation
+	cudaFree(d_a);
+	cudaFree(d_b);
+	cudaFree(d_c);
+
+	delete[] h_a;
+	delete[] h_b;
+	delete[] h_c;
 
 	return 0;
 }
