@@ -21,8 +21,8 @@ __global__ void gemm_shared_mem(float *a, float *b, float *c, size_t m,
 
 	// Shared memory for tiles
 	__shared__ float
-		aTile[32][32]; // TILE_SIZE must not exceed shared memory limits
-	__shared__ float bTile[32][32];
+		aTile[78][78]; // TILE_SIZE must not exceed shared memory limits
+	__shared__ float bTile[78][78];
 
 	// Iterate over tiles in the shared dimension
 	for (int t = 0; t < (n + TILE_SIZE - 1) / TILE_SIZE; ++t) {
