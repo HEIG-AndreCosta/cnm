@@ -33,7 +33,12 @@ Kernel Pattern 4 : Le temps reste relativement constant, la dépendence à `s` e
 ## Stage 3
 
 **How many times do you read each matrix from global memory in the shared memory implementation?**
-avec une matrice de taille 
+La memoire est lue une fois pour chaque tile. Tout dépends de la taille de la tile.
+
+par exemple: pour une matrice A de taille 256 x 256 et une tile de 16 x 16, on lit 16 x 16 = 256 éléments de A. Du coup, pour compléter la matrice A, on lit 256 x 256 / 256 = 256 fois la matrice A.
+
+Si maintenant on optimise au maximum, on peut faire 2 tiles, pour A et B, de 78 x 78. On lit donc 78 x 78 = 6084 éléments de A et B. Pour compléter la matrice A, on lit (256 x 256) / (78 x 78) = 11 fois la matrice A et 11 x la matrice B.
+
 **How long does the gpu gemm with shared memory take?** 
 **Now, double the size of *n*, *m* and *p*. How long does it take now?**
 

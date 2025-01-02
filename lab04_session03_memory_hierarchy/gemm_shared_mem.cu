@@ -20,9 +20,10 @@ __global__ void gemm_shared_mem(float *a, float *b, float *c, size_t m,
 	const int TILE_SIZE = blockDim.x;
 
 	// Shared memory for tiles
-	__shared__ float
-		aTile[32][32]; // TILE_SIZE must not exceed shared memory limits
-	__shared__ float bTile[32][32];
+	__shared__ float aTile
+		[BLOCK_SIZE]
+		[BLOCK_SIZE]; // TILE_SIZE must not exceed shared memory limits
+	__shared__ float bTile[BLOCK_SIZE][BLOCK_SIZE];
 
 	// Iterate over tiles in the shared dimension
 	for (int t = 0; t < (n + TILE_SIZE - 1) / TILE_SIZE; ++t) {
