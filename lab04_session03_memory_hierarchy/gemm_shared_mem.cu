@@ -167,7 +167,7 @@ int main(int argc, char const *argv[])
 	// Kernel execution and measuring
 	printf("Running GEMM shared mem in GPU...\n");
 	cudaEventRecord(start);
-	gemm_shared_mem<<<grid_size, block_size> > >(d_a, d_b, d_c, m, n, p);
+	gemm_shared_mem<<<grid_size, block_size>>>(d_a, d_b, d_c, m, n, p);
 	cudaEventRecord(stop);
 
 	// Copy result from device
