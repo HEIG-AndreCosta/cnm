@@ -93,9 +93,9 @@ bool check_gemm(float const *a, float const *b, float const *c, size_t m,
 
 int main(int argc, char const *argv[])
 {
-	size_t m = 512;
-	size_t n = 512;
-	size_t p = 512;
+	size_t m = 1024;
+	size_t n = 1024;
+	size_t p = 1024;
 
 	float event_elaspsed_time_ms = 0;
 
@@ -167,7 +167,7 @@ int main(int argc, char const *argv[])
 	// Kernel execution and measuring
 	printf("Running GEMM shared mem in GPU...\n");
 	cudaEventRecord(start);
-	gemm_shared_mem<<<grid_size, block_size>>>(d_a, d_b, d_c, m, n, p);
+	gemm_shared_mem<<<grid_size, block_size> > >(d_a, d_b, d_c, m, n, p);
 	cudaEventRecord(stop);
 
 	// Copy result from device
