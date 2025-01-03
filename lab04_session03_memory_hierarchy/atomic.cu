@@ -3,12 +3,18 @@
 
 #define NUM_THREADS 10000000
 #define BLOCK_WIDTH 1000
+#define USE_ATOMIC 0
 
 __global__ void increment(int *a, size_t size)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	i = i % size;
+
+#if USE_ATOMIC
 	atomicAdd(a + i, 1);
+#else
+    a[i] += 1;
+#endif
 }
 
 // TODO implement increment kernel with CUDA atomics
