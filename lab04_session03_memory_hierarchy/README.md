@@ -19,6 +19,7 @@ __global__ void aux(float *a, int s)
 
 3. `a[i*s] = e;` OUI si `s == 1` sinon NON
 
+**NOTE: Attention a la numérotation, le point 3 et 4 semblent inversés, le rendu markdown fausse la numérotation. Il faut regarder la numérotation hors de l'interpreteur markdown**
 
 Implement the kernel for number 3 and number 4 and measure the time it takes to complete different executions using different values of `s`. Comment the results.
 
@@ -29,6 +30,8 @@ Voici le graphe représentant le temps d'exécution en fonction du décalage `s`
 Kernel Pattern 3 : On observe une augmentation progressive du temps d'exécution avec `s` en raison de la `sparsité`.
 
 Kernel Pattern 4 : Le temps reste relativement constant, la dépendence à `s` est moindre.
+
+
 
 ## Stage 3
 
