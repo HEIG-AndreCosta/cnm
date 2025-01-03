@@ -32,13 +32,13 @@ Un `SM` contient plusieurs "coeurs" qui permettent d'executer des opération ari
 
 * What is a wrap?
 
-Un wrap est un groupe de thread qui sont éxécuté en même temps. 32 pour la jetson. Ils partagent tous la meme instruction mais peuvent traiter des données différentes.
+Un wrap est un groupe de threads qui sont éxécuté en même temps. 32 pour la jetson. Ils partagent tous la meme instruction mais peuvent traiter des données différentes (SIMD).
 
 * What is a block?
-c'est un groupe de thread qui s'exécutent ensemble et qui partagent des ressources. Un block peut contenir jusqu'à 1024 threads mais seulement 32(warp) threads peuvent être exécutés en même temps.
+c'est un groupe de threads qui s'exécutent ensemble et qui partagent des ressources. Un block peut contenir jusqu'à 1024 threads mais seulement 32(warp) threads peuvent être exécutés en même temps.
 
 * What is a grid?
-Une grille constitue simplement un groupe de block. C'est ce qui permet d'exploiter le parralelisme massif de la carte graphique avec des structure 1D, 2D ou 3D. Il peuvent seulement partager des informations via la mémoire globale. 
+Une grille constitue simplement en un groupe de block. C'est ce qui permet d'exploiter le parralelisme massif de la carte graphique avec des structure 1D, 2D ou 3D. Il peuvent seulement partager des informations via la mémoire globale. 
 
 ## Stage 4
 
@@ -67,7 +67,7 @@ Avec `numElements` = 50000 et `threadsPerBlock` = 256, cela donne :
 
 `threadsPerBlock` * `blocksPerGrid` = 256 * 196 = 50176.
 
-Seul 50'000 threads sont utilisés en raison de la taille du vecteur.
+En realité seulement 50'000 threads font un calcul en raison de la taille du vecteur.
 
 
 **What function is used to allocate memory in the device? and to free memory in the device?**
@@ -90,7 +90,7 @@ Provide the timeline graph of your application, and a 2-3 sentences analysis of 
 |----------|-----------------|-----------|-----------|-----------|----------|----------|-------------|-----------------------------------------------------------|
 | 100.0    | 25’056          | 1         | 25’056.0  | 25’056.0  | 25’056   | 25’056   | 0.0         | vectorAdd(const float *, const float *, float *, int)     |
 
-Avec ce tableau, on peut voir que 100% du temps d'exécution est consacré à la fonction `vectorAdd`. Cela signifie que le GPU est utilisé à 100% pour effectuer l'addition de vecteurs.
+Avec ce tableau, on peut voir que 100% du temps d'exécution est consacré à la fonction `vectorAdd`. Ceci est attendu vu que c'est le seul kernel appellé.
 
 **From the API calls, What it is the funtion that consume more time?**
 
@@ -101,5 +101,5 @@ Avec ce tableau, on peut voir que 100% du temps d'exécution est consacré à la
 | 0.1      | 245’088         | 3         | 81’696.0     | 18’144.0    | 8’032    | 218’912      | 118’940.1       | cudaFree          |
 | 0.0      | 76’256          | 1         | 76’256.0     | 76’256.0    | 76’256   | 76’256       | 0.0             | cudaLaunchKernel  |
 
-Le tableau montre que la fonction `cudaMalloc` consomme 98.8% du temps d'exécution. Cela signifie que la majorité du temps est consacré à l'allocation de mémoire sur le GPU.
+Le tableau montre que la fonction `cudaMalloc` consomme 98.8% du temps d'exécution. Cela signifie que la majorité du temps est consacré à l'allocation/organisation de mémoire sur le GPU.
 
