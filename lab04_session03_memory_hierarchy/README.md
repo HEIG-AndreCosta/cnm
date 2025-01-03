@@ -108,16 +108,48 @@ On remarque que le temps d'exécution est plus long avec l'utilisation des atomi
  
 ## Stage 5.1
 - Performance (speedup) comparison between `simple_gemm` and `cublasSgem`
+| `n` x `m` x `p`    | CPU Time (ms) | cuBLAS Time (ms) | Speed-Up (CPU/cuBLAS) |
+| ------------------ | ------------- | ---------------- | --------------------- |
+| 256 x 256 x 256    | 99.077 ms     | 0.156 ms         | 635x                  |
+| 512 x 512 x 512    | 812.087 ms    | 0.767 ms         | 1058x                 |
+| 1024 x 1024 x 1024 | 6606.852 ms   | 5.405 ms         | 1222x                 |
+| 2048 x 2048 x 2048 | 63272.566     | 24.547           | 2577 x                |
+
 
 ### Stage 5.1 questions
-- What cuBLAS datatype is used for function status returns?
-- What does `cublasCreate` do? What data type does is use?
-- What cuBLAS methods do we use to copy data from host to GPU? and from GPU to host?
-- What matrix memory layout (row-oriented or column-oriented) is assumed in `simple_gemm()`?
-- What is the matrix memory layout expected by `cublasSgemm()`?
+**What cuBLAS datatype is used for function status returns?**
+
+`cublasStatus_t` est utilisé pour les retours de status des fonctions cuBLAS.
+
+**What does `cublasCreate` do? What data type does is use?**
+`cublasCreate` crée un contexte cuBLAS. Il initialise un contexte cuBLAS et retourne un handle de type `cublasHandle_t` qui peut être utilisé dans les fonctions cuBLAS
+
+**What cuBLAS methods do we use to copy data from host to GPU? and from GPU to host?**
+Pour copier des données de l'hôte vert le GPU, on utilise `cublasSetVector`.Pour copier des données du GPU vers l'hôte, on utilise `cublasGetVector`.
+
+**What matrix memory layout (row-oriented or column-oriented) is assumed in `simple_gemm()`?**
+La fonction `simple_sgemm()` utilise un agencement **row-oriented**.
+
+**What is the matrix memory layout expected by `cublasSgemm()`?**
+La fonction `cublasSgemm()` attend un agencement **column-oriented**.
 
 ## Stage 5.2
 
-- What is the network topology?
-- What method do we use to create a cuDNN context? What datatype does it use?
-- What data type do we use to describe a tensor (a multidimensional array)? What method do we use to create an instance of a tensor descriptor? What method do we use to initalize a multidemsional tensor descriptor?
+**What is the network topology?**
+
+- 2 couches pour la convolution: `conv1` et `conv2)
+- 2 couches de pooling
+- 2 couches fully connected `ip1` et `ip2`
+- 1 ReLU comme fonction activation
+- 1 couche Softmax pour faire de la classification
+
+**What method do we use to create a cuDNN context? What datatype does it use?**
+
+La méthode pour créer un contexte cuDNN est `cudnnCreate()`. Cette methode utilise un pointeur vers un objet `cudnnHandle_t` comme type de données.
+
+**What data type do we use to describe a tensor (a multidimensional array)? What method do we use to create an instance of a tensor descriptor? What method do we use to initalize a multidemsional tensor descriptor?**
+
+Le type de données d'un tensor descriptor est `cudnnTensorDescriptor_t`.
+La méthode de création d'un tensor descriptot est `cudnnCreateTensorDescriptor()`.
+La méthode d'initialisation d'un descripteur de multidimensional tensor est `cudnnSetTensorNdDescriptor()`.
+
