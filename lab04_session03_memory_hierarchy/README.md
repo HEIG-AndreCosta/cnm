@@ -140,7 +140,7 @@ La fonction `cublasSgemm()` attend un agencement **column-oriented**.
 
 **What is the network topology?**
 
-- 2 couches pour la convolution: `conv1` et `conv2)
+- 2 couches pour la convolution: `conv1` et `conv2`
 - 2 couches de pooling
 - 2 couches fully connected `ip1` et `ip2`
 - 1 ReLU comme fonction activation
