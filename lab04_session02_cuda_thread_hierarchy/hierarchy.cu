@@ -5,8 +5,8 @@
 __global__ void print_variables(void)
 {
 
-	printf("Thread (%d, %d)/(%d, %d) in (%d, %d)/(%d, %d)\n", threadIdx.x + 1,
-	       threadIdx.y + 1, blockDim.x, blockDim.y, blockIdx.x + 1, blockIdx.y + 1,
+	printf("Thread (%d, %d)/(%d, %d) in (%d, %d)/(%d, %d)\n", threadIdx.x,
+	       threadIdx.y, blockDim.x, blockDim.y, blockIdx.x, blockIdx.y,
 	       gridDim.x, gridDim.y);
 }
 
