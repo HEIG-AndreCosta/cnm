@@ -6,47 +6,68 @@
 
 ```c++
     //Kernel execution configuration example
-    kernel<<<32, 32>>>()
+	dim3 blockDim(6, 6);
+	dim3 gridDim(5, 5);
+	print_variables<<<blockDim, gridDim>>>();
+
 ```
 
 Voici une partie de l'output:
 
 ```bash
-
-Thread 0/32 in 6/32
-Thread 1/32 in 6/32
-Thread 2/32 in 6/32
-Thread 3/32 in 6/32
-Thread 4/32 in 6/32
-Thread 5/32 in 6/32
-Thread 6/32 in 6/32
-Thread 7/32 in 6/32
-Thread 8/32 in 6/32
-Thread 9/32 in 6/32
-Thread 10/32 in 6/32
-Thread 11/32 in 6/32
-Thread 12/32 in 6/32
-Thread 13/32 in 6/32
-Thread 14/32 in 6/32
-Thread 15/32 in 6/32
-Thread 16/32 in 6/32
-Thread 17/32 in 6/32
+Thread (0, 0)/(5, 5) in (4, 5)/(6, 6)
+Thread (1, 0)/(5, 5) in (4, 5)/(6, 6)
+Thread (2, 0)/(5, 5) in (4, 5)/(6, 6)
+Thread (3, 0)/(5, 5) in (4, 5)/(6, 6)
+Thread (4, 0)/(5, 5) in (4, 5)/(6, 6)
+Thread (0, 1)/(5, 5) in (4, 5)/(6, 6)
+Thread (1, 1)/(5, 5) in (4, 5)/(6, 6)
+Thread (2, 1)/(5, 5) in (4, 5)/(6, 6)
+Thread (3, 1)/(5, 5) in (4, 5)/(6, 6)
+Thread (4, 1)/(5, 5) in (4, 5)/(6, 6)
+Thread (0, 2)/(5, 5) in (4, 5)/(6, 6)
+Thread (1, 2)/(5, 5) in (4, 5)/(6, 6)
+Thread (2, 2)/(5, 5) in (4, 5)/(6, 6)
+Thread (3, 2)/(5, 5) in (4, 5)/(6, 6)
+Thread (4, 2)/(5, 5) in (4, 5)/(6, 6)
+Thread (0, 3)/(5, 5) in (4, 5)/(6, 6)
+Thread (1, 3)/(5, 5) in (4, 5)/(6, 6)
+Thread (2, 3)/(5, 5) in (4, 5)/(6, 6)
+Thread (3, 3)/(5, 5) in (4, 5)/(6, 6)
+Thread (4, 3)/(5, 5) in (4, 5)/(6, 6)
+Thread (0, 4)/(5, 5) in (4, 5)/(6, 6)
 ...
-...
-Thread 24/32 in 28/32
-Thread 25/32 in 28/32
-Thread 26/32 in 28/32
-Thread 27/32 in 28/32
-Thread 28/32 in 28/32
-Thread 29/32 in 28/32
-Thread 30/32 in 28/32
-Thread 31/32 in 28/32
-
+Thread (1, 4)/(5, 5) in (4, 5)/(6, 6)
+Thread (2, 4)/(5, 5) in (4, 5)/(6, 6)
+Thread (3, 4)/(5, 5) in (4, 5)/(6, 6)
+Thread (4, 4)/(5, 5) in (4, 5)/(6, 6)
+Thread (0, 0)/(5, 5) in (3, 5)/(6, 6)
+Thread (1, 0)/(5, 5) in (3, 5)/(6, 6)
+Thread (2, 0)/(5, 5) in (3, 5)/(6, 6)
+Thread (3, 0)/(5, 5) in (3, 5)/(6, 6)
+Thread (4, 0)/(5, 5) in (3, 5)/(6, 6)
+Thread (0, 1)/(5, 5) in (3, 5)/(6, 6)
+Thread (1, 1)/(5, 5) in (3, 5)/(6, 6)
+Thread (2, 1)/(5, 5) in (3, 5)/(6, 6)
+Thread (3, 1)/(5, 5) in (3, 5)/(6, 6)
+Thread (4, 1)/(5, 5) in (3, 5)/(6, 6)
+Thread (0, 2)/(5, 5) in (3, 5)/(6, 6)
+Thread (1, 2)/(5, 5) in (3, 5)/(6, 6)
+Thread (2, 2)/(5, 5) in (3, 5)/(6, 6)
+Thread (3, 2)/(5, 5) in (3, 5)/(6, 6)
+Thread (4, 2)/(5, 5) in (3, 5)/(6, 6)
+Thread (0, 3)/(5, 5) in (3, 5)/(6, 6)
+Thread (1, 3)/(5, 5) in (3, 5)/(6, 6)
+Thread (2, 3)/(5, 5) in (3, 5)/(6, 6)
+Thread (3, 3)/(5, 5) in (3, 5)/(6, 6)
+Thread (4, 3)/(5, 5) in (3, 5)/(6, 6)
+Thread (0, 4)/(5, 5) in (3, 5)/(6, 6)
+Thread (1, 4)/(5, 5) in (3, 5)/(6, 6)
+Thread (2, 4)/(5, 5) in (3, 5)/(6, 6)
+Thread (3, 4)/(5, 5) in (3, 5)/(6, 6)
+Thread (4, 4)/(5, 5) in (3, 5)/(6, 6)
 ``` 
 
-afin de visualiser correctement l'utilisation des threads, voici une representation graphique:
-
-![alt text](image.png)
 
 **How many threads in total will be used with your execution configuration?**
 
