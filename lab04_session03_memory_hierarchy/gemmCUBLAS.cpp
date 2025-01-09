@@ -198,8 +198,8 @@ int main(int argc, char **argv)
 
 		for (auto j = 0; j < num_iterations; j++) {
 			checkCublasErrors(cublasSgemm(
-				handle, CUBLAS_OP_N, CUBLAS_OP_N, M, P, N,
-				&alpha, d_A, M, d_B, N, &beta, d_C, M));
+				handle, CUBLAS_OP_T, CUBLAS_OP_T, N, P, P,
+				&alpha, d_A, N, d_B, P, &beta, d_C, P));
 		}
 
 		checkCudaErrors(cudaEventRecord(stop));
