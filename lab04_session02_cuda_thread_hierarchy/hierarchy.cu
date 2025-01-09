@@ -4,13 +4,17 @@
 
 __global__ void print_variables(void)
 {
-	printf("Thread %d/%d in %d/%d\n", threadIdx.x, blockDim.x, blockIdx.x,
-	       gridDim.x);
+
+	printf("Thread (%d, %d)/(%d, %d) in (%d, %d)/(%d, %d)\n", threadIdx.x,
+	       threadIdx.y, blockDim.x, blockDim.y, blockIdx.x, blockIdx.y,
+	       gridDim.x, gridDim.y);
 }
 
 int main(int argc, char const *argv[])
 {
-	print_variables<<<32, 32>>>();
+	dim3 blockDim(6, 6); // Block size of 16x16 threads
+	dim3 gridDim(6, 6);
+	print_variables<<<blockDim, gridDim>>>();
 	cudaDeviceSynchronize();
 	return 0;
 }
