@@ -196,6 +196,9 @@ int main(int argc, char **argv)
 
 		checkCudaErrors(cudaEventRecord(start));
 		for (auto j = 0; j < num_iterations; j++) {
+			// We trick cublas into calculating or row major order matrices
+			// and giving us the result in row major order aswell
+			// https://stackoverflow.com/questions/56043539/cublassgemm-row-major-multiplication
 			checkCublasErrors(cublasSgemm(
 				handle, CUBLAS_OP_N, CUBLAS_OP_N, P, M, N,
 				&alpha, d_B, P, d_A, N, &beta, d_C, P));
